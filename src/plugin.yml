@@ -1,21 +1,30 @@
 name: Custom-Commands
 main: io.github.taixue.plugin.customcommands.CustomCommandPlugin
 author: Chuanwise
-version: 0.0.1
+version: 1.0
 
 commands:
   customcommands:
     description: Generic Custom-commands command
     aliases: [ccs]
-    usage: /ccs (<config | run> <remain part>)|(reload | debug)
+    usage: |
+      Usage:
+      /ccs reload                         reload all configurations
+      /ccs version                        show version and some other information
+      /ccs debug                          enable or disable debug mode
+      /ccs <config | run> <remain-part>   sames with /ccs<r|c> <remain-part>
   customcommandsconfig:
     description: Generic Custom-commands command for configuring
     aliases: [ccsc, ccsconfig]
-    usage: /ccsc val <variable-name> [set-to]   get or set a variable in config
+    usage: |
+      Usage:
+      /ccsc val <variable-name> [set-to]   get or set a variable in config
   customcommandsrun:
     description: Run configured commands
     aliases: [ccsr, ccsrun]
-    usage: /ccsr <command-name> [arguments-list]
+    usage: |
+      Usage:
+      /ccsr <command-name> [arguments-list]
 
 permissions:
   ccs.*:
@@ -23,17 +32,15 @@ permissions:
     description: Give players with op everything by default
     children:
       ccs.run.*: true
+  ccs.version:
+    default: true
+    description: Permission to see version, name and other information of CustomCommands
   ccs.debug:
     default: op
-    description: open or close debug
+    description: enable or disable debug mode
   ccs.reload:
     default: op
     description: reload all configurations
-  ccs.config.val:
-    default: op
-    children:
-      ccs.config.val.set: true
-      ccs.config.val.look: true
   ccs.config.val.set:
     default: op
     description: set value of variable in config.yml
