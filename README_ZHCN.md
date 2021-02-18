@@ -1,6 +1,6 @@
 # CustomCommands
-<p>CustomCommandS 插件也叫 CCS，允许自己设置一些指令的格式，以简化输入。
-<p>This is Chinese Document, click to see [English Document](https://github.com/Chuanwise/CustomCommands/tree/main/README_EN.md)
+CustomCommandS 插件也叫 CCS，允许自己设置一些指令的格式，以简化输入。
+This is Chinese Document, click to see [English Document](https://github.com/Chuanwise/CustomCommands/tree/main/README_EN.md)
 
 * 插件 QQ 群：`1028582500`
 * 作者：椽子。
@@ -82,7 +82,7 @@ commands:
 解析输入的指令的规则。你可以在 format 中定义一些变量，就像 `{variable_name}`。<br>
 一个合乎规则的变量名必须仅由英文字母、数字和下划线组成，并且不以数字开头。<br>
 
-<p>`1.0`版本下使用数字开头的变量名并不会产生错误，但可能在高版本中出现不可预料的问题。
+`1.0`版本下使用数字开头的变量名并不会产生错误，但可能在高版本中出现不可预料的问题。
 
 变量 `{remain}` 是一个很特殊的变量。如果在 `format` 中使用，它必须出现在末尾。<br>
 在解析的时候，如果遇到 `{remain}` ，指令剩余的所有内容都会存入这个变量中，所以它的内容可能包含空格。
@@ -91,7 +91,9 @@ commands:
 在输入了正确的 `/ccsr` 指令后将会执行的命令<br>
 如果这当中出现了没有在 `format` 中定义的变量，它们会保持原样。
 
-<p><b>警告</b>： CCS 允许你在 actions 中写入 `/ccsr` 指令，这可能会导致循环。例如下面的情况：
+<b>警告</b>：
+
+ CCS 允许你在 actions 中写入 `/ccsr` 指令，这可能会导致循环。例如下面的情况：
 
 ```yaml
 commands:
@@ -106,14 +108,14 @@ commands:
 
 ### usage （选填）
 默认值：`/ccsr <指令名> <解析规则>`.<br>
-<p>在上面的 `pex-group-set` 命令中，`usage` 的值是 '/ccsr pex-group-set {user_name} {group_name}'
+在上面的 `pex-group-set` 命令中，`usage` 的值是 '/ccsr pex-group-set {user_name} {group_name}'
 
 <p>这是描述该指令用法的字符串<br>
 他将在使用指令的人输入了错误的格式时显示<br>
 
 ### var-nullable （选填）
 默认值：`false`.<br>
-<p>如果这个值设置为 `true`，可能会导致对同一个解析规则，存在多个合法输入模式。例如：<br>
+如果这个值设置为 `true`，可能会导致对同一个解析规则，存在多个合法输入模式。例如：<br>
 `解析规则`: `{arg1} {arg2} {arg3}`<br>
 `合法输入`: `/ccsr <command-name>`<br>
          | `/ccsr <command-name> <arg1>`<br>
@@ -125,7 +127,7 @@ commands:
 
 ### identify （选填）
 默认值： `auto`.<br>
-<p>执行 `actions` 时的身份，可以是 `auto` 也可以是 `console`。`auto` 就是以当前输入 `/ccsr` 指令的身份执行 `actions`，`console` 就是以控制台身份执行 `actions`。<p>
+执行 `actions` 时的身份，可以是 `auto` 也可以是 `console`。`auto` 就是以当前输入 `/ccsr` 指令的身份执行 `actions`，`console` 就是以控制台身份执行 `actions`。<p>
 这个设置项允许你仅使用 `console` 时可以通过权限 `ccs.run.<指令名>` 跳过这一串指令的权限检测。当然，在未来这个插件还可能支持 `bypass` 模式（以玩家身份无视权限执行）。
 
 ## 权限节点

@@ -1,6 +1,6 @@
 # CustomCommands
 <p>CustomCommands allows you input some commands with your custom formats.
-<p>This is Chinese Document, click to see [EnglishDocument](https://github.com/Chuanwise/CustomCommands/tree/main/README_EN.md)
+这是英文文档，你也可以查看 [中文文档](https://github.com/Chuanwise/CustomCommands/tree/main/README_ZHCN.md)
 
 * QQ group: `1028582500`
 * Author: Chuanwise
@@ -95,14 +95,15 @@ If there are some undeclared variable in action commands, it won't be replaced t
 
 ### usage (optional)
 default value: `/ccsr <command-name> <format-string>`.<br>
-<p>default value in above case is '/ccsr pex-group-set {user_name} {group_name}'
+
+default value in above case is '/ccsr pex-group-set {user_name} {group_name}'
 
 <p>A string describing usage of this command.<br>
 The usage will be send to command sender when he input a wrong command.<br>
 
 ### var-nullable (optional)
 default value: `false`.<br>
-<p>If it set to `true`, there are many legal input format for same parsing format:<br>
+If it set to `true`, there are many legal input format for same parsing format:<br>
 `parsing format`: {arg1} {arg2} {arg3}<br>
 `legal input formats`: `/ccsr <command-name>`<br>
                      | `/ccsr <command-name> <arg1>`<br>
@@ -110,11 +111,13 @@ default value: `false`.<br>
                      | `/ccsr <command-name> <arg1> <arg2> <arg3>`<br>
 and some variable will be set to null in this case.
 
-<p><b>NOTICE</b><br>variable `{remain}` doesn't restricted.
+<b>NOTICE</b><br>
+
+variable `{remain}` doesn't restricted.
 
 ### identify (optional)
 default value: `auto`.<br>
-<p>identify of action commands sender, is `auto` or `console`. `auto` means the action commands sender is the same with ccsr command sender.
+identify of action commands sender, is `auto` or `console`. `auto` means the action commands sender is the same with ccsr command sender.
 
 
 ## Permissions
