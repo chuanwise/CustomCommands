@@ -91,7 +91,7 @@ commands:
 在输入了正确的 `/ccsr` 指令后将会执行的命令<br>
 如果这当中出现了没有在 `format` 中定义的变量，它们会保持原样。
 
-<p><b>警告</b> CCS 允许你在 actions 中写入 `/ccsr` 指令，这可能会导致循环。例如下面的情况：
+<p><b>警告</b>： CCS 允许你在 actions 中写入 `/ccsr` 指令，这可能会导致循环。例如下面的情况：
 
 ```yaml
 commands:
@@ -121,7 +121,7 @@ commands:
          | `/ccsr <command-name> <arg1> <arg2> <arg3>`<br>
 并且有的变量可能为空值。
 
-<p><b>提示</b>变量 `{remain}` 永远可以为空值，并不受此规则约束。
+<p><b>提示</b>：变量 `{remain}` 永远可以为空值，并不受此规则约束。
 
 ### identify （选填）
 默认值： `auto`.<br>

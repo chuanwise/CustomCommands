@@ -91,7 +91,7 @@ When parsing, all remain part of commands will be set to it, so the value of `{r
 commands will be executed after input correct command.<br>
 If there are some undeclared variable in action commands, it won't be replaced to a value.
 
-<p><b>WARNING</b> CustomCommands allow you to input some ccsr command in actions, Sometime It maybe cause loops, which may make server show a lot of Exception message and shutdown. So in order to protect your server, you <b>must</b> design action commands carefully when they include a `/ccsr` command.
+<p><b>WARNING</b><br> CustomCommands allow you to input some ccsr command in actions, Sometime It maybe cause loops, which may make server show a lot of Exception message and shutdown. So in order to protect your server, you <b>must</b> design action commands carefully when they include a `/ccsr` command.
 
 ### usage (optional)
 default value: `/ccsr <command-name> <format-string>`.<br>
@@ -110,7 +110,7 @@ default value: `false`.<br>
                      | `/ccsr <command-name> <arg1> <arg2> <arg3>`<br>
 and some variable will be set to null in this case.
 
-<p><b>NOTICE</b>variable `{remain}` doesn't restricted.
+<p><b>NOTICE</b><br>variable `{remain}` doesn't restricted.
 
 ### identify (optional)
 default value: `auto`.<br>

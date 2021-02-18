@@ -14,6 +14,6 @@
 * Taixue, All rights reserved.
 
 ## Appreciate to：鸣谢
-* `Favorite`
-* `Coloryr`
+* `Favourite`：引导我入门了最基础的 `Minecraft` 服务器技术
 * `One47`
+* `Coloryr`
