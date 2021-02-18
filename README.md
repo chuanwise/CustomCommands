@@ -4,7 +4,7 @@
 
 ## Documents：文档
 * [中文文档（Chinese）](https://github.com/Chuanwise/CustomCommands/tree/main/README_ZHCN.md)
-* [English Document (英文)](https://github.com/Chuanwise/CustomCommands/tree/main/README_ZHCN.md)
+* [English Document  (英文)](https://github.com/Chuanwise/CustomCommands/tree/main/README_ZHCN.md)
 
 ## Contact us：联系方式
 * QQ group（QQ 群）:  `1028582500`
@@ -14,5 +14,6 @@
 * Taixue, All rights reserved.
 
 ## Appreciate to：鸣谢
-* Coloryr
-* One47
+* `Favorite`
+* `Coloryr`
+* `One47`

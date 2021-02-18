@@ -1,6 +1,6 @@
 # CustomCommands
 <p>CustomCommands allows you input some commands with your custom formats.
-<p>This is Chinese Document, click to see [English Document](https://github.com/Chuanwise/CustomCommands/tree/main/README_EN.md)
+<p>This is Chinese Document, click to see [EnglishDocument](https://github.com/Chuanwise/CustomCommands/tree/main/README_EN.md)
 
 * QQ group: `1028582500`
 * Author: Chuanwise
