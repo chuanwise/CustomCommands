@@ -1,31 +1,10 @@
-# CustomCommands
-<p>CustomCommands allows you input some commands with your custom formats.
-<p>This is English document. Chinese one will be punished soon.
-
-## Getting Started
-
-## Configuration
-### config.yml
-The default `config.yml` is:
-
-```yaml
-config:       
-  # zhcn for Chinese
-  lang: zhcn
-  debug: false
-  max-iterations: 10
-```
-
-## commands.yml
-The default `commands.yml` is:
-
-```yaml
+# see https://github.com/Chuanwise/CustomCommands
 commands:
   # Permission to execute a command is: ccs.run.<command_name>
 
   # (required)
   # <command-name>:
-  pex-set-group:
+  broadcast:
     # (required)
     # format: rule to parser command inputted by command sender
     #         You can define some variable in here, like: {variable-name}
@@ -33,7 +12,7 @@ commands:
     #         the {remain} is a special variable: it's optional, can only appear at the end of
     #         format string when using it.
     #
-    format: '{user_id} {group_name}'
+    format: '{remain}'
 
     # (optional)
     # usage: a string describing usage of this command.
@@ -42,10 +21,6 @@ commands:
 
     # usage: '(unfinished usage string)'
 
-    # (optional)
-    # var-nullable: allow or deny null variable
-    #               
-
     # (required)
     # actions: commands will be executed after a user has permission "ccs.run.<command_name>"
     #          input correct command.
@@ -53,19 +28,10 @@ commands:
     #          Sometime It maybe cause some loop, which may make server shutdown.
     #          So you must design actions carefully when actions include other ccsr command.
     actions:
-      - 'pex user {user_name} group set {group_name}'
+      - 'pex user {argument_name} group set {remain}'
+      - 'you are ugly!'
 
     # (optional)
     # identify: identify of action commands sender, is "auto" or "console"
     #           "auto" means the action commands sender is the same with ccsr command sender.
     identify: console
-```
-
-## commands
-All commands start with `/ccs config <remain-arguments>` can be written to `/ccsc <remain-arguments>`.<br>
-and 
-* `/ccs reload` reload all config for CustomCommands.
-* `/ccs config <variable-name>` lookup a variable on `config.yml` and show its value.
-* `/ccs config `
-
-

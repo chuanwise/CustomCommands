@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CustomCommands:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CustomCommands_jar</output-path>
+    <root id="archive" name="CustomCommands.jar">
+      <element id="module-output" name="CustomCommands" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../jar/snakeyaml-1.27.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../jar/fastjson-1.2.75.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../jar/spigot-api-1.10-R0.1-20160618.090835-32.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
