@@ -13,6 +13,10 @@
 * 明城京联合太学，保留所有权利。
 * Taixue, All rights reserved.
 
+## Update Log：更新日志
+### Version 1.0
+发布于 `2021年2月19日`，第一版
+
 ## Appreciate to：鸣谢
 * `Favourite`：引导我入门了最基础的 `Minecraft` 服务器技术
 * `One47`
