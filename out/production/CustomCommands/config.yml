@@ -1,0 +1,4 @@
+config:
+  lang: 'zhcn'
+  debug: false
+  max-iterations: 10

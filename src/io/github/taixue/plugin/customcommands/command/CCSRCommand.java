@@ -2,19 +2,14 @@ package io.github.taixue.plugin.customcommands.command;
 
 import io.github.taixue.plugin.customcommands.Plugin;
 import io.github.taixue.plugin.customcommands.path.Path;
-import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.defaults.BukkitCommand;
-import org.bukkit.command.defaults.PluginsCommand;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -48,26 +43,27 @@ public class CCSRCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (Objects.isNull(command)) {
-            commandSender.sendMessage(Plugin.language.noAnyLoadedCommand);
+            commandSender.sendMessage(Plugin.language.messageHead + Plugin.language.noAnyLoadedCommand);
             return true;
         }
         if (strings.length >= 1) {
             if (!commandSender.hasPermission("ccs.run." + strings[0])) {
-                commandSender.sendMessage(Plugin.language.lackPermission.replaceAll("\\{permission\\}", "ccs.run." + strings[0]));
+                commandSender.sendMessage(Plugin.language.messageHead + Plugin.language.lackPermission.replaceAll("\\{permission\\}", "ccs.run." + strings[0]));
+                Plugin.logger.info(commandSender.getName() + " want to use " + strings[0] + " command, but he don't have enough permissions.");
                 return true;
             }
             try {
                 if (Plugin.debug) {
-                    commandSender.sendMessage("---------- command: " + strings[0] + " ----------");
+                    commandSender.sendMessage(Plugin.language.messageHead + "---------- command: " + strings[0] + " ----------");
                 }
                 MemorySection customCommand = ((MemorySection) commands.get(strings[0]));
 
                 if (Plugin.debug) {
                     if (Objects.isNull(customCommand)) {
-                        commandSender.sendMessage("cannot found command: " + strings[0]);
+                        commandSender.sendMessage(Plugin.language.messageHead + "cannot found command: " + strings[0]);
                     }
                     else {
-                        commandSender.sendMessage("got command " + strings[0] + " successfully!");
+                        commandSender.sendMessage(Plugin.language.messageHead + "got command " + strings[0] + " successfully!");
                     }
                 }
 
@@ -75,19 +71,19 @@ public class CCSRCommand implements CommandExecutor {
                     String format = ((String) customCommand.get("format"));
                     String[] paras = format.split(" ");
                     if (Plugin.debug) {
-                        commandSender.sendMessage("format: " + format);
+                        commandSender.sendMessage(Plugin.language.messageHead + "format: " + format);
                     }
 
                     String usage = ((String) customCommand.get("usage"));
                     if (Objects.isNull(usage)) {
                         usage = "/ccsr " + strings[0] + " " + format.trim();
                         if (Plugin.debug) {
-                            commandSender.sendMessage("(format string as usage): " + usage);
+                            commandSender.sendMessage(Plugin.language.messageHead + "(format string as usage): " + usage);
                         }
                     }
                     else {
                         if (Plugin.debug) {
-                            commandSender.sendMessage("usage: " + usage);
+                            commandSender.sendMessage(Plugin.language.messageHead + "usage: " + usage);
                         }
                     }
 
@@ -101,13 +97,13 @@ public class CCSRCommand implements CommandExecutor {
                         if (paras[paraIndex].startsWith("{")) {
                             // valid identify
                             if (para.equals("{remain}") && paraIndex != paras.length - 1) {
-                                commandSender.sendMessage(Plugin.language.wrongPositionForRemain);
+                                commandSender.sendMessage(Plugin.language.messageHead + Plugin.language.wrongPositionForRemain);
                                 return true;
                             }
                             if (para.matches("\\{\\w+\\}")) {
                                 String variableName = para.substring(1, para.length() - 1);
                                 if (argValMap.containsKey(variableName)) {
-                                    commandSender.sendMessage(Plugin.language.redefinedVariable.replaceAll("\\{variable\\}", variableName));
+                                    commandSender.sendMessage(Plugin.language.messageHead + Plugin.language.redefinedVariable.replaceAll("\\{variable\\}", variableName));
                                     return true;
                                 }
                                 else {
@@ -115,14 +111,14 @@ public class CCSRCommand implements CommandExecutor {
                                 }
                             }
                             else {
-                                commandSender.sendMessage(Plugin.language.wrongFormatForCommandsPara.
+                                commandSender.sendMessage(Plugin.language.messageHead + Plugin.language.wrongFormatForCommandsPara.
                                         replaceAll("\\{command_name\\}", strings[0]).
                                         replaceAll("\\{para_name\\}", para));
                                 return true;
                             }
                         }
                         else if (!para.equals(arg)) {
-                            commandSender.sendMessage(usage.replaceAll("\\{command_name\\}", strings[0]));
+                            commandSender.sendMessage(Plugin.language.messageHead + usage.replaceAll("\\{command_name\\}", strings[0]));
                             return true;
                         }
 
@@ -138,34 +134,34 @@ public class CCSRCommand implements CommandExecutor {
                         if (paraIndex == paras.length - 1 && paras[paraIndex].equals("{remain}")) {
                             String variableName = "remain";
                             if (argValMap.containsKey(variableName)) {
-                                commandSender.sendMessage(Plugin.language.redefinedVariable.replaceAll("\\{variable\\}", variableName));
+                                commandSender.sendMessage(Plugin.language.messageHead + Plugin.language.redefinedVariable.replaceAll("\\{variable\\}", variableName));
                                 return true;
                             } else {
                                 argValMap.put(variableName, "");
                             }
                         }
                         else if (!((Boolean) customCommand.get("var-nullable", false))) {
-                            commandSender.sendMessage(Plugin.language.variableCannotBeBull);
-                            commandSender.sendMessage(usage.replaceAll("\\{command_name\\}", strings[0]));
+                            commandSender.sendMessage(Plugin.language.messageHead + Plugin.language.variableCannotBeBull);
+                            commandSender.sendMessage(Plugin.language.messageHead + usage.replaceAll("\\{command_name\\}", strings[0]));
                             return true;
 
                         }
                         else while (paraIndex < paras.length) {
                             String para = paras[paraIndex].trim();
                             if (Plugin.debug) {
-                                commandSender.sendMessage("try to set parameter or string: " + para + " to null string.");
+                                commandSender.sendMessage(Plugin.language.messageHead + "try to set parameter or string: " + para + " to null string.");
                             }
 
                             if (para.matches("\\{\\w+\\}")) {
                                 String variableName = para.substring(1, para.length() - 1);
                                 if (argValMap.containsKey(variableName)) {
-                                    commandSender.sendMessage(Plugin.language.redefinedVariable.replaceAll("\\{variable\\}", variableName));
+                                    commandSender.sendMessage(Plugin.language.messageHead + Plugin.language.redefinedVariable.replaceAll("\\{variable\\}", variableName));
                                     return true;
                                 } else {
                                     argValMap.put(variableName, "");
                                 }
                             } else {
-                                commandSender.sendMessage(usage.replaceAll("\\{command_name\\}", strings[0]));
+                                commandSender.sendMessage(Plugin.language.messageHead + usage.replaceAll("\\{command_name\\}", strings[0]));
                                 return true;
                             }
                             paraIndex++;
@@ -184,18 +180,18 @@ public class CCSRCommand implements CommandExecutor {
                             argValMap.put("remain", remain.toString());
                         }
                         else {
-                            commandSender.sendMessage(usage.replaceAll("\\{command_name\\}", strings[0]));
+                            commandSender.sendMessage(Plugin.language.messageHead + usage.replaceAll("\\{command_name\\}", strings[0]));
                             return true;
                         }
                     }
 
                     if (Plugin.debug) {
-                        commandSender.sendMessage("variable-value list:");
+                        commandSender.sendMessage(Plugin.language.messageHead + "variable-value list:");
                         if (argValMap.isEmpty()) {
-                            commandSender.sendMessage("(There is no any parameter)");
+                            commandSender.sendMessage(Plugin.language.messageHead + "(There is no any parameter)");
                         }
                         else for (String para: argValMap.keySet()) {
-                            commandSender.sendMessage("\t> " + para + ":\t" + argValMap.get(para));
+                            commandSender.sendMessage(Plugin.language.messageHead + "    > " + para + ":    " + argValMap.get(para));
                         }
                     }
 
@@ -204,12 +200,12 @@ public class CCSRCommand implements CommandExecutor {
 
                     if (Plugin.debug) {
                         if (actions.isEmpty()) {
-                            commandSender.sendMessage("(no any untranslated action command)");
+                            commandSender.sendMessage(Plugin.language.messageHead + "(no any untranslated action command)");
                         }
                         else {
-                            commandSender.sendMessage("untranslated action command:");
+                            commandSender.sendMessage(Plugin.language.messageHead + "untranslated action command:");
                             for (String cmd: actions) {
-                                commandSender.sendMessage("\t> " + cmd);
+                                commandSender.sendMessage(Plugin.language.messageHead + "    > " + cmd);
                             }
                         }
                     }
@@ -230,18 +226,31 @@ public class CCSRCommand implements CommandExecutor {
 
                     if (Plugin.debug) {
                         if (actionStrings.isEmpty()) {
-                            commandSender.sendMessage("(no any action command)");
+                            commandSender.sendMessage(Plugin.language.messageHead + "(no any action command)");
                         }
                         else {
-                            commandSender.sendMessage("action commands:");
+                            commandSender.sendMessage(Plugin.language.messageHead + "action commands:");
                             for (String cmd: actionStrings) {
-                                commandSender.sendMessage("\t> " + cmd);
+                                commandSender.sendMessage(Plugin.language.messageHead + "    > " + cmd);
                             }
                         }
                     }
 
                     // execute it
                     String identify = ((String) customCommand.get("identify", "auto"));
+
+                    if (actionStrings.isEmpty()) {
+                        Plugin.logger.info(commandSender.getName() + " will use " + strings[0] + " command with identify " + identify +
+                                ", but it haven't any actions to execute.");
+                    }
+                    else {
+                        Plugin.logger.info(commandSender.getName() + " will use " + strings[0] + " command with identify " + identify +
+                                ", which was parse to:");
+                        for (String cmd: actionStrings) {
+                            Plugin.logger.info("    > " + cmd);
+                        }
+                    }
+
                     switch (identify) {
                         case "auto":
                             for (String action: actionStrings) {
@@ -254,16 +263,16 @@ public class CCSRCommand implements CommandExecutor {
                             }
                             break;
                         default:
-                            commandSender.sendMessage(Plugin.language.wrongIdentify);
+                            commandSender.sendMessage(Plugin.language.messageHead + Plugin.language.wrongIdentify);
                             break;
                     }
                 }
                 else {
-                    commandSender.sendMessage(Plugin.language.undefinedCommand.replaceAll("\\{command_name\\}", strings[0]));
+                    commandSender.sendMessage(Plugin.language.messageHead + Plugin.language.undefinedCommand.replaceAll("\\{command_name\\}", strings[0]));
                 }
             }
             catch (ClassCastException | NullPointerException exception) {
-                commandSender.sendMessage(Plugin.language.wrongFormatForCommandsFile.replaceAll("\\{command_name\\}", strings[0]));
+                commandSender.sendMessage(Plugin.language.messageHead + Plugin.language.wrongFormatForCommandsFile.replaceAll("\\{command_name\\}", strings[0]));
             }
             return true;
         }

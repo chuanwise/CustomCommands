@@ -1,9 +1,7 @@
 package io.github.taixue.plugin.customcommands.lang;
 
-import io.github.taixue.plugin.customcommands.path.Path;
-
 public class Language {
-    public String messageHead = "[CustomCommands] ";
+    public String messageHead = "[Custom-Commands] ";
 
     public String noAnyLoadedCommand = "There is no any custom commands, you can use /ccs reload to reload configurations.";
     public String wrongFormatForCommandsFile = "Wrong custom command \"{command_name}\": command should be MemorySection";

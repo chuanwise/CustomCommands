@@ -1,0 +1,37 @@
+# see https://github.com/Chuanwise/CustomCommands
+commands:
+  # Permission to execute a command is: ccs.run.<command_name>
+
+  # (required)
+  # <command-name>:
+  broadcast:
+    # (required)
+    # format: rule to parser command inputted by command sender
+    #         You can define some variable in here, like: {variable-name}
+    #         a legal variable name should only consist of English alphas, digits and underlines.
+    #         the {remain} is a special variable: it's optional, can only appear at the end of
+    #         format string when using it.
+    #
+    format: '{remain}'
+
+    # (optional)
+    # usage: a string describing usage of this command.
+    #        The usage will be send to command sender when he input wrong command,
+    #        If usage doesn't exist, it'll be "/ccsr <command-name> <format-string>" instead.
+
+    # usage: '(unfinished usage string)'
+
+    # (required)
+    # actions: commands will be executed after a user has permission "ccs.run.<command_name>"
+    #          input correct command.
+    #          [Warning] CustomCommands allow you to input some ccsr command in actions,
+    #          Sometime It maybe cause some loop, which may make server shutdown.
+    #          So you must design actions carefully when actions include other ccsr command.
+    actions:
+      - 'pex user {argument_name} group set {remain}'
+      - 'you are ugly!'
+
+    # (optional)
+    # identify: identify of action commands sender, is "auto" or "console"
+    #           "auto" means the action commands sender is the same with ccsr command sender.
+    identify: console

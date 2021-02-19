@@ -1,5 +1,5 @@
 # CustomCommands
-<p>CustomCommands allows you input some commands with your custom formats.
+CustomCommands allows you to input some commands with your custom formats.
 这是英文文档，你也可以查看 [中文文档](https://github.com/Chuanwise/CustomCommands/tree/main/README_ZHCN.md)
 
 * QQ group: `1028582500`

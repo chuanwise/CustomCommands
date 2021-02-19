@@ -1,0 +1,10 @@
+# The lang.yml is unfinished so it's useless temporarily.
+
+lang:
+  message-head: '[CustomCommands] '
+  no-any-loaded-commands: '没有任何自定义指令，或 commands.yml 尚未重载。若希望重载，请使用 /ccs reload'
+  wrong-format-for-commands-file: '自定义指令 {command_name} 错误：command 应该是 MemorySection'
+  undefined-command: '未定义指令：{command_name}'
+  wrong-format-for-commands-para: '形式参数 {para_name} 名应该是仅由英文字母、数字和下划线组成的字符串'
+  extra-args: '指令结尾未出现 remain 变量却包含额外的实参'
+  wrong-identify: '发送指令的身份只能是 auto 或 console'

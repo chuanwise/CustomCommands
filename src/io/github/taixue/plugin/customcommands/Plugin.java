@@ -18,6 +18,11 @@ import java.util.logging.Logger;
 public class Plugin {
     private Plugin() {}
 
+    public static final String VERSION = "1";
+    public static final String NAME = "CustomCommands";
+    public static final String GITHUB = "https://github.com/Chuanwise/CustomCommands";
+    public static final String QQ_GROUP = "1028582500";
+
     public static CustomCommandPlugin plugin;
     public static Language language;
     public static Logger logger;
@@ -46,14 +51,14 @@ public class Plugin {
         configFile = new File(plugin.getDataFolder(), Path.CONFIG);
         commandsFile = new File(plugin.getDataFolder(), Path.COMMANDS);
 
-        logger.info("----------[CustomCommands]----------");
+        logger.info("----------[" + NAME + " - " + VERSION +"]----------");
 
         logger.info("Hello! Nice to meet you!");
 
         logger.info("CustomCommands is written by Chuanwise, all rights reserved by Chuanwise and Taixue.");
-        logger.info("You can support us in https://github.com/Chuanwise/CustomCommands :)");
+        logger.info("You can support us in " + GITHUB + " :)");
 
-        logger.info("Join the QQ group: 1028582500 to get the newest update and some tech-suppositions.");
+        logger.info("Join the QQ group: " + QQ_GROUP + " to get the newest update and some tech-suppositions.");
 
         logger.info("---------- loading ----------");
 
@@ -63,7 +68,7 @@ public class Plugin {
         loadLanguage();
         logger.info("loading commands...");
         loadCommands();
-        logger.info("load configurations completely!");
+        logger.info("------ load configurations completely :) ------");
     }
 
     public static void reload() {
@@ -78,11 +83,9 @@ public class Plugin {
                     logger.severe("Fail to copy config.yml from jar to data folder for CustomCommands!");
                 } else {
                     configuration = YamlConfiguration.loadConfiguration(configFile);
-                    logger.info("saved default config to file! " + configuration);
                 }
             } else {
                 configuration = plugin.getConfig();
-                logger.info("loaded config " + configuration + " to file!");
             }
             debug = ((Boolean) configuration.get("config.debug", false));
         }
@@ -92,7 +95,7 @@ public class Plugin {
     }
 
     private static void loadLanguage() {
-        logger.info("load language: " + configuration.get("config.lang"));
+        logger.info("language: " + configuration.get("config.lang"));
         logger.info("Language function is unfinished, default language is English.");
         language = new Language();
     }
@@ -133,8 +136,8 @@ public class Plugin {
         logger.info("------ all configuration saved ------");
 
         logger.info("CustomCommands is written by Chuanwise, all rights reserved by Chuanwise and Taixue.");
-        logger.info("You can support us in https://github.com/Chuanwise/CustomCommands :)");
-        logger.info("Join the QQ group: 1028582500 to get the newest update and some tech-suppositions.");
+        logger.info("You can support us in " + GITHUB + " :)");
+        logger.info("Join the QQ group: " + QQ_GROUP + " to get the newest update and some tech-suppositions.");
         logger.info("------ Think you for using CustomCommands, see you :) ------");
     }
 

@@ -1,5 +1,5 @@
 # CustomCommands：自定义指令
-<p>CustomCommands allows you input some commands with your custom formats.
+<p>CustomCommands allows you to input some commands with your custom formats.
 <p>CustomCommands 插件也叫 CCS（CustomCommandS）或 Custom-Commands 等，允许自己设置一些指令的格式，以简化输入。
 
 ## Documents：文档
