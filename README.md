@@ -32,7 +32,7 @@ CustomCommands 插件也叫 CCS（CustomCommandS）或 Custom-Commands 等，允
 * `/ccsc taixue ...`
 这些指令都以 `/ccsc taixue` 开头，却具有不同的参数格式，对应不同的功能。<br>
 
-在 `CCS` 中，上述指令同属于<b>指令组<br> `taixue`，它们是 `taixue` 的不同<b>指令分支</b>。<br>
+在 `CCS` 中，上述指令同属于<b>指令组</b> `taixue`，它们是 `taixue` 的不同<b>指令分支</b>。<br>
 
 由此可见，指令组的构成单元是<b>指令分支</b>。
 
