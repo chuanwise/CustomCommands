@@ -4,7 +4,6 @@ import io.github.taixue.plugin.customcommands.Plugin;
 import io.github.taixue.plugin.customcommands.customcommand.Command;
 import io.github.taixue.plugin.customcommands.customcommand.Group;
 import io.github.taixue.plugin.customcommands.language.Messages;
-import io.github.taixue.plugin.customcommands.util.Groups;
 import io.github.taixue.plugin.customcommands.util.Commands;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,10 +24,6 @@ public class CCSRCommandExecutor implements CommandExecutor {
             Group group = Plugin.commandsConfig.getGroup(groupName);
             Messages.setNewVariable("group", groupName);
 
-            if (!Groups.hasPermission(commandSender, groupName)) {
-                Messages.sendMessage(commandSender, "lackPermission");
-                return true;
-            }
             if (Objects.isNull(group)) {
                 Messages.sendMessage(commandSender, "undefinedGroup");
                 return true;
@@ -38,6 +33,14 @@ public class CCSRCommandExecutor implements CommandExecutor {
 
                 if (commands.isEmpty()) {
                     Messages.sendMessage(commandSender, "commandNotFound");
+                    ArrayList<Command> allCommands = Commands.screenUsableCommand(commandSender, group.getCommands());
+
+                    if (!allCommands.isEmpty()) {
+                        Messages.sendMessage(commandSender, "loadedCommand");
+                        for (Command cmd : allCommands) {
+                            Messages.sendMessage(commandSender, cmd.getUsageString());
+                        }
+                    }
                     return true;
                 }
                 else if (commands.size() != 1) {

@@ -14,7 +14,7 @@
 
   "lackPermission": "缺少权限节点：§e{permission}§r",
   "parameterCannotBeBull": "parameterCannotBeBull",
-  "defaultResultString": "成功执行 §e{command}§r 指令",
+  "defaultResultString": "成功执行 §e{group}§7 组中的 §e{command}§r 指令",
   "illegalCommandName": "非法的指令名：§e{command}§r",
   "illegalGroupName": "非法的指令组名：§e{group}§r",
 

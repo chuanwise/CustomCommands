@@ -51,12 +51,12 @@ config:
 
 ```yaml
 commands:
-  # 执行一个自定义指令的权限是：ccs.run.<command_name>
+  # 执行一个自定义指令组的权限是：ccs.run.<command_name>
 
   # （必填）
-  # <指令名>:
+  # <指令组名>:
   # 请不要以 - 开头。1.0 版本中以 - 开头并不会产生错误，但是在高版本的 CCS 中这可能导致严重错误。
-  pex-group-set:
+  permission:
 
     # （必填）
     format: '{user_name} {group_name}'
@@ -67,13 +67,10 @@ commands:
       - 'broadcast {user_name} is a member of {group_name}.'
 
     # （选填）
-    identify: console
+    # identify: console
 
     # （选填）
     # usage: '（一个描述该指令用途的字符串）'
-
-    # （选填）
-    # var-nullable: true
 
     # （选填）
     # identify: console
