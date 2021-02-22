@@ -1,0 +1,41 @@
+{
+  "messageHead": "§7[§eCustom§7-§6Commands§7]§r ",
+  "debugHead": "{messageHead}§cDEBUG §e>§6>§r ",
+
+  "wrongFormatForGroup": "指令组 §e{group}§r 格式错误",
+  "wrongFormatForCommand": "指令 §e{command}§r 错误",
+
+  "undefinedGroup": "未定义指令组 §e{group}§r",
+
+  "illegalParameterName": "形式参数 §e{parameter}§r 名应该是仅由英文字母、数字和下划线组成的字符串",
+  "redefinedParameter": "形式参数 §e{parameter}§r 重定义",
+  "extraArgs": "指令结尾未出现 remain 变量却包含额外的实参",
+  "wrongIdentify": "发送指令的身份只能是 auto 或 console",
+
+  "lackPermission": "缺少权限节点：§e{permission}§r",
+  "parameterCannotBeBull": "parameterCannotBeBull",
+  "defaultResultString": "成功执行 §e{command}§r 指令",
+  "illegalCommandName": "非法的指令名：§e{command}§r",
+  "illegalGroupName": "非法的指令组名：§e{group}§r",
+
+  "exceptionInLoadingGroup": "加载指令组 §e{group}§r 时出现异常：§e{exception}§r",
+  "exceptionInLoadingCommand": "加载指令 §e{command}§r 时出现异常：§e{exception}§r",
+  "exceptionInLoadingFile": "读取文件 §e{file}§r 时出现异常：§e{exception}§r",
+  "exceptionInExecutingCommand": "执行指令 §e{command}§r 时出现异常：§e{exception}§r",
+  "exceptionInParsingCommand": "解析指令 §e{command}§r 时出现异常：§e{exception}§r",
+
+  "unknownException": "未知错误导致异常: §e{exception}§r",
+
+  "groupNotFound": "未找到指令组：§e{group}§r",
+  "commandNotFound": "未在指令组 §e{group}§r 中找到能与当前参数列表匹配的指令",
+  "multipleCommands": "有 §e{size}§r 个指令与之匹配，请修改设置以消除歧义。",
+  "unmatchableArguments": "unmatchableArguments",
+
+  "loadedGroups": "当前已加载的指令组：",
+  "noAnyLoadedGroup": "没有加载任何指令组",
+  "loadedCommand": "当前在指令组 §e{group}§r 中加载的指令有：",
+  "noAnyLoadedCommand": "没有任何自定义指令，或 commands.yml 尚未重载。若希望重载，请使用 /ccs reload",
+
+  "redefinedGroup": "重定义指令组：§e{group}§r",
+  "redefinedCommand": "在指令组 §e{group}§r 中重定义指令：§e{command}§r"
+}

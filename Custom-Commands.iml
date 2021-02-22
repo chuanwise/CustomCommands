@@ -7,43 +7,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../jar" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/../../jar" recursive="false" />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../jar/commons-lang3-3.11" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="file://$MODULE_DIR$/../../jar/commons-lang3-3.11/apidocs" />
-        </JAVADOC>
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../jar/commons-lang3-3.11" />
-        </SOURCES>
-        <jarDirectory url="file://$MODULE_DIR$/../../jar/commons-lang3-3.11" recursive="false" />
-        <jarDirectory url="file://$MODULE_DIR$/../../jar/commons-lang3-3.11" recursive="false" type="SOURCES" />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jar/commons-lang-2.6/commons-lang-2.6.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="jar://$MODULE_DIR$/../../jar/commons-lang-2.6/commons-lang-2.6-javadoc.jar!/" />
-        </JAVADOC>
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../jar/commons-lang-2.6/commons-lang-2.6-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
+    <orderEntry type="library" exported="" name="SpigotPlugin" level="project" />
   </component>
 </module>

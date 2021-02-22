@@ -18,8 +18,8 @@ This is Chinese Document, click to see [English Document](https://github.com/Chu
 * `/ccs version`                  显示插件名、版本号等信息
 * `/ccs debug`                    开关调试模式
 
-* `/ccsc <variable-name>`                 查找 `config.yml` 中的设置项 `<variable-name>`，并显示其值。
-* `/ccsc <variable-name> <set-to>`        设置 `config.yml` 中的设置项 `<variable-name>` 的值为 `<set-to>`。
+* `/ccsc val <variable-name>`                 查找 `config.yml` 中的设置项 `<variable-name>`，并显示其值。
+* `/ccsc val <variable-name> <set-to>`        设置 `config.yml` 中的设置项 `<variable-name>` 的值为 `<set-to>`。
 
 * `/ccsr <command-name> [arguments-list]` 执行在 `commands.yml` 内定义的指令 `<command-name> `。
 

@@ -1,0 +1,8 @@
+# see https://github.com/Chuanwise/CustomCommands
+
+commands:
+  say:
+    this:
+      format: '{remain}'
+      actions:
+        - 'say {remain}'

@@ -1,20 +1,22 @@
 package io.github.taixue.plugin.customcommands.util;
 
+import com.sun.istack.internal.NotNull;
+
 import java.io.*;
 import java.util.Objects;
 
-public class FileUtil {
+public class Files {
 
     /**
-     * copy file from jar to disk
-     * @param srcFilePath
-     * @param fos
-     * @return boolean
+     * 将一个 jar 内的文件复制到某地
+     * @param srcFilePath   jar 内的文件名
+     * @param fos           复制到的 File
+     * @return boolean      true 当且仅当复制成功
      */
-    public static boolean fileCopy(String srcFilePath, File fos){
+    public static boolean fileCopy(@NotNull String srcFilePath, @NotNull File fos){
         boolean flag = false;
         try {
-            try (BufferedInputStream fis = new BufferedInputStream(Objects.requireNonNull(FileUtil.class.getClassLoader().getResourceAsStream(srcFilePath)));
+            try (BufferedInputStream fis = new BufferedInputStream(Objects.requireNonNull(Files.class.getClassLoader().getResourceAsStream(srcFilePath)));
                  BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(fos))) {
                 byte[] buf = new byte[1024];
                 int c = 0;

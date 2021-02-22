@@ -1,74 +1,83 @@
 package io.github.taixue.plugin.customcommands;
 
-import io.github.taixue.plugin.customcommands.command.CCSCCommand;
-import io.github.taixue.plugin.customcommands.command.CCSCommand;
-import io.github.taixue.plugin.customcommands.command.CCSRCommand;
-import io.github.taixue.plugin.customcommands.lang.Language;
-import io.github.taixue.plugin.customcommands.path.Path;
-import io.github.taixue.plugin.customcommands.util.FileUtil;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import io.github.taixue.plugin.customcommands.commandexecutor.CCSCCommandExecutor;
+import io.github.taixue.plugin.customcommands.commandexecutor.CCSCommandExecutor;
+import io.github.taixue.plugin.customcommands.commandexecutor.CCSRCommandExecutor;
+import io.github.taixue.plugin.customcommands.config.CommandsConfig;
+import io.github.taixue.plugin.customcommands.config.PluginConfig;
+import io.github.taixue.plugin.customcommands.language.Messages;
+import io.github.taixue.plugin.customcommands.path.Paths;
+import io.github.taixue.plugin.customcommands.util.Files;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 
 public class Plugin {
     private Plugin() {}
 
-    public static final String VERSION = "1";
+    public static final String VERSION = "2.0";
     public static final String NAME = "CustomCommands";
+    public static final String AUTHOR = "Chuanwise";
+    public static final String ORGANIZATION = "Taixue";
     public static final String GITHUB = "https://github.com/Chuanwise/CustomCommands";
     public static final String QQ_GROUP = "1028582500";
 
     public static CustomCommandPlugin plugin;
-    public static Language language;
-    public static Logger logger;
 
-    public static FileConfiguration configuration;
+    public static PluginConfig pluginConfig;
+    public static CommandsConfig commandsConfig;
 
     public static boolean debug = false;
 
-    public static final CCSCommand ccsCommand = new CCSCommand();
-    public static final CCSCCommand ccscCommand = new CCSCCommand();
-    public static final CCSRCommand ccsrCommand = new CCSRCommand();
+    public static final CCSCommandExecutor CCS_COMMAND_EXECUTOR = new CCSCommandExecutor();
+    public static final CCSCCommandExecutor CCSC_COMMAND_EXECUTOR = new CCSCCommandExecutor();
+    public static final CCSRCommandExecutor CCSR_COMMAND_EXECUTOR = new CCSRCommandExecutor();
 
     private static File configFile;
     private static File commandsFile;
 
     public static void load(CustomCommandPlugin customCommandPlugin) {
         plugin = customCommandPlugin;
-        logger = plugin.getLogger();
+        Messages.setLogger(plugin.getLogger());
         setCommandExecutors();
 
         if (!plugin.getDataFolder().exists() && !plugin.getDataFolder().mkdirs()) {
-            logger.severe("Directory " + plugin.getDataFolder().getName() + " doesn't exist and cannot be created!");
+            Messages.severeString("Directory " + plugin.getDataFolder().getName() + " doesn't exist and cannot be created!");
             return;
         }
 
-        configFile = new File(plugin.getDataFolder(), Path.CONFIG);
-        commandsFile = new File(plugin.getDataFolder(), Path.COMMANDS);
+        if (!checkFrontPlugins()) {
+            Messages.severeString("Lack some front plugins, can not load" + NAME + ".");
+            return;
+        }
 
-        logger.info("----------[" + NAME + " - " + VERSION +"]----------");
+        configFile = new File(plugin.getDataFolder(), Paths.CONFIG);
+        commandsFile = new File(plugin.getDataFolder(), Paths.COMMANDS);
 
-        logger.info("Hello! Nice to meet you!");
-
-        logger.info("CustomCommands is written by Chuanwise, all rights reserved by Chuanwise and Taixue.");
-        logger.info("You can support us in " + GITHUB + " :)");
-
-        logger.info("Join the QQ group: " + QQ_GROUP + " to get the newest update and some tech-suppositions.");
-
-        logger.info("---------- loading ----------");
-
-        logger.info("loading config...");
+        Messages.infoString("----------[" + NAME + " " + VERSION +"]----------");
+        Messages.infoString("Hello! Nice to meet you!");
+        Messages.infoString("CustomCommands is written by Chuanwise, all rights reserved by Chuanwise and Taixue.");
+        Messages.infoString("You can support us in " + GITHUB + " :)");
+        Messages.infoString("Join the QQ group: " + QQ_GROUP + " to get the newest update and some tech-suppositions.");
+        Messages.infoString("---------- loading ----------");
+        Messages.infoString("loading config...");
         loadConfig();
-        logger.info("loading language...");
-        loadLanguage();
-        logger.info("loading commands...");
+        Messages.infoString("loading language...");
+        loadMessage();
+        Messages.infoString("loading commands...");
         loadCommands();
-        logger.info("------ load configurations completely :) ------");
+        Messages.infoString("------ load configurations completely :) ------");
+    }
+
+    private static boolean checkFrontPlugins() {
+//        org.bukkit.plugin.Plugin plugin =
+//                Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
+//        if (plugin != null){
+//            System.out.println("这个服务器安装了PAPI插件！");
+//        }
+        return true;
     }
 
     public static void reload() {
@@ -79,71 +88,64 @@ public class Plugin {
         try {
             if (!configFile.exists()) {
                 plugin.saveDefaultConfig();
-                if (!configFile.exists()) {
-                    logger.severe("Fail to copy config.yml from jar to data folder for CustomCommands!");
-                } else {
-                    configuration = YamlConfiguration.loadConfiguration(configFile);
-                }
-            } else {
-                configuration = plugin.getConfig();
             }
-            debug = ((Boolean) configuration.get("config.debug", false));
+            pluginConfig = new PluginConfig(configFile, "config");
+            debug = ((Boolean) pluginConfig.get("debug", false));
         }
         catch (YAMLException exception) {
             exception.printStackTrace();
         }
     }
 
-    private static void loadLanguage() {
-        logger.info("language: " + configuration.get("config.lang"));
-        logger.info("Language function is unfinished, default language is English.");
-        language = new Language();
+    private static boolean loadMessage() {
+        Messages.setLogger(Plugin.plugin.getLogger());
+        return Messages.setLanguage(((String) pluginConfig.get("lang", "en")));
     }
 
     private static void loadCommands() {
         if (!commandsFile.exists()) {
-            if (!FileUtil.fileCopy(Path.DEFAULT_COMMANDS, commandsFile)) {
-                logger.severe("cannot create the default commands.yml");
+            if (!Files.fileCopy(Paths.COMMANDS, commandsFile)) {
+                Messages.severeString("cannot create the default commands.yml");
             }
         }
-        ccsrCommand.loadSavedCommand();
+        commandsConfig = new CommandsConfig();
     }
 
     public static void saveConfig() {
         try {
-            configuration.save(configFile);
+            pluginConfig.save();
         }
         catch (IOException ioException) {
-            logger.severe(ioException + " at saving config.yml");
+            Messages.severeString(ioException + " at saving config.yml");
         }
     }
 
     public static void saveCommands() {
         try {
-            ccsrCommand.getFileConfiguration().save(commandsFile);
+            commandsConfig.save();
         }
         catch (IOException ioException) {
-            logger.severe(ioException + " at saving commands.yml");
+            Messages.severeString(ioException + " at saving commands.yml");
         }
     }
 
     public static void close() {
-        logger.info("----------[CustomCommands]----------");
-        logger.info("saving config.yml");
+        Messages.infoString("----------[" + NAME + " " + VERSION +"]----------");
+        Messages.infoString("saving config.yml");
         saveConfig();
-        logger.info("saving commands.yml");
+        Messages.infoString("saving commands.yml");
         saveCommands();
-        logger.info("------ all configuration saved ------");
+        Messages.infoString("------ all configuration saved ------");
 
-        logger.info("CustomCommands is written by Chuanwise, all rights reserved by Chuanwise and Taixue.");
-        logger.info("You can support us in " + GITHUB + " :)");
-        logger.info("Join the QQ group: " + QQ_GROUP + " to get the newest update and some tech-suppositions.");
-        logger.info("------ Think you for using CustomCommands, see you :) ------");
+        Messages.infoString("CustomCommands is written by Chuanwise, all rights reserved by Chuanwise and Taixue.");
+        Messages.infoString("You can support us in " + GITHUB + " :)");
+        Messages.infoString("Join the QQ group: " + QQ_GROUP + " to get the newest update and some tech-suppositions.");
+        Messages.infoString("------ Think you for using CustomCommands, see you :) ------");
     }
 
     private static void setCommandExecutors() {
-        plugin.getCommand("customcommandsrun").setExecutor(ccsrCommand);
-        plugin.getCommand("customcommandsconfig").setExecutor(ccscCommand);
-        plugin.getCommand("customcommands").setExecutor(ccsCommand);
+        plugin.getCommand("customcommandsrun").setExecutor(CCSR_COMMAND_EXECUTOR);
+        plugin.getCommand("customcommandsconfig").setExecutor(CCSC_COMMAND_EXECUTOR);
+        plugin.getCommand("customcommands").setExecutor(CCS_COMMAND_EXECUTOR);
     }
 }
