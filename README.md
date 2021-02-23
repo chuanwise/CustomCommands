@@ -13,6 +13,10 @@ CustomCommands 插件也叫 CCS（CustomCommandS）或 Custom-Commands 等，允
 * [演示效果](#演示效果)
   * [设计目标](#设计目标)
   * [实际效果](#实际效果)
+    * [错误的指令组名](#错误的指令组名)
+    * [指令组名正确但无任何可匹配分支](#指令组名正确但无任何可匹配分支)
+    * [匹配某一分支成功](#匹配某一分支成功)
+    * [同时能被多个分支匹配](#同时能被多个分支匹配) 
 * [前置插件](#前置插件)
 * [插件指令](#插件指令)
 * [配置文件](#配置文件)
@@ -27,8 +31,6 @@ CustomCommands 插件也叫 CCS（CustomCommandS）或 Custom-Commands 等，允
   * [2.0](#2.0)
   * [1.0](#1.0)
 * [感谢](#感谢)
-
-
 
 ## 基本概念
 ### 指令组
@@ -74,11 +76,13 @@ commands:
   # ...
 ```
 ### 实际效果
+#### 错误的指令组名
 输入了错误的指令组名，将会输出：
 ```log
 >ccsr qwq
 [11:22:03] [Server thread/INFO]: [Custom-Commands] 未定义指令组 qwq
 ```
+#### 指令组名正确但无任何可匹配分支
 输入正确的指令组名但没有任何分支可以匹配输入格式，将会输出所有该用户可用的分支格式：
 ```log
 >ccsr test
@@ -87,6 +91,7 @@ commands:
 [11:20:13] [Server thread/INFO]: [Custom-Commands] /ccsr test something {arg1} {arg2} tail {arg3}
 [11:20:13] [Server thread/INFO]: [Custom-Commands] /ccsr test something {arg1}
 ```
+#### 匹配某一分支成功
 输入匹配第一种分支`/ccsr test something {arg1} {arg2} tail {arg3}`，则自动执行该分支下的指令： `say {arg1} {arg2}` 和 `say {arg3}`，并显示 `a string will be send to command sender after all parsed commands executed.` 信息：
 ```log
 >ccsr test something qwq orz tail qwqw!
@@ -120,7 +125,9 @@ commands:
 [11:22:31] [Server thread/INFO]: [Server] qwq
 [11:22:31] [Server thread/INFO]: [Custom-Commands] 成功执行 test 组中的 branch2 指令
 ```
+#### 同时能被多个分支匹配
 如果修改设置，使得多种分支能够同时被匹配，则会输出错误：
+
 配置文件：
 ```yaml
 commands:
@@ -150,20 +157,6 @@ commands:
 ## 前置插件
 暂无。<br>
 发布下一个版本之后，可能会需要 `PlaceholderAPI`。
-
-```log
->ccsr test something qwq orz tail qwqw!
-[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >> variable-value list:
-[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > arg3:    qwqw!
-[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > arg2:    orz
-[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > arg1:    qwq
-[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >> parsed commands:
-[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > say qwq orz
-[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > say qwqw!
-[11:24:56] [Server thread/INFO]: [Server] qwq orz
-[11:24:56] [Server thread/INFO]: [Server] qwqw!
-[11:24:56] [Server thread/INFO]: [Custom-Commands] a string will be send to command sender after all parsed commands executed.
-```
 
 ## 插件指令
 所有格式是 `/ccs <config | run> <remain-arguments>` 的指令都可以被简化为 `/ccs<c | r> <remain-arguments>`.，例如 `/ccs config` 可以简化为 `/ccsc`。<br>
