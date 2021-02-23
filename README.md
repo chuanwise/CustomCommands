@@ -5,22 +5,30 @@ CustomCommands 插件也叫 CCS（CustomCommandS）或 Custom-Commands 等，允
 * 作者：椽子。
 * 明城京联合太学，保留所有权利。
 
-## 前置插件
-暂无。<br>
-发布下一个版本之后，可能会需要 `PlaceholderAPI`。
+## 目录
+* [基本概念](#基本概念)
+  * [指令组](##指令组)
+  * [指令分支](##指令分支)
+  * [指令查找](##指令查找)
+* [演示效果](#演示效果)
+  * [设计目标](#设计目标)
+  * [实际效果](#实际效果)
+* [前置插件](#前置插件)
+* [插件指令](#插件指令)
+* [配置文件](#配置文件)
+  * [config.yml](#config.yml)
+  * [commands.yml](#commands.yml)
+* [配置文件示例](#配置文件示例)
+  * [config.yml](#config.yml)
+  * [commands.yml](#commands.yml)
+* [权限节点](#权限节点)
+* [联系方式](#联系方式)
+* [更新日志](#更新日志)
+  * [2.0](#2.0)
+  * [1.0](#1.0)
+* [感谢](#感谢)
 
-## 插件指令
-所有格式是 `/ccs <config | run> <remain-arguments>` 的指令都可以被简化为 `/ccs<c | r> <remain-arguments>`.，例如 `/ccs config` 可以简化为 `/ccsc`。<br>
-`CCSC` 也就是 `CustomCommandS Config`， `CCSR` 是 `CustomCommandS Run`
 
-* `/ccs reload`                                 重载所有设置
-* `/ccs version`                                显示插件名、版本号等信息
-* `/ccs debug`                                  开关调试模式
-
-* `/ccsc val <variable-name>`                   查找 `config.yml` 中的设置项 `<variable-name>`，并显示其值。
-* `/ccsc val <variable-name> <set-to>`          设置 `config.yml` 中的设置项 `<variable-name>` 的值为 `<set-to>`。
-
-* `/ccsr <command-name> [arguments-list]`       执行在 `commands.yml` 内定义的指令 `<command-name> `。
 
 ## 基本概念
 ### 指令组
@@ -43,6 +51,132 @@ CustomCommands 插件也叫 CCS（CustomCommandS）或 Custom-Commands 等，允
 ### 指令查找
 执行使用 `CCS` 设计的指令的语句一般是：`/ccsr <group-name> <arguments>`。CCS 首先查找名为 `<group-name>` 的指令组，在该指令组下的所有分支中寻找能与当前参数匹配的一种分支。若能确定唯一的匹配当前参数的分支，则执行该指令。
 
+## 演示效果
+### 设计目标
+如果你希望输入 `/ccsr test something {arg1} {arg2} tail {arg3}` 后自动执行 `say {arg1} {arg2}` 和 `say {arg3}`，同时希望输入 `/ccsr test something {arg1}` 后自动执行 `say {arg1}`，那么 `commands.yml` 应该是：
+```yaml
+commands:
+  # test 指令组下有两个分支：branch1 和 branch2
+  test:
+    branch1:
+      format: 'something {arg1} {arg2} tail {arg3}'
+      result: 'a string will be send to command sender after all parsed commands executed.'
+      actions:
+        - 'say {arg1} {arg2}'
+        - 'say {arg3}'
+    branch2:
+      format: 'something {arg1}'
+      actions:
+        - 'say {arg1}'
+    # 其他分支信息
+    # ...
+  # 其他指令组信息
+  # ...
+```
+### 实际效果
+输入了错误的指令组名，将会输出：
+```log
+>ccsr qwq
+[11:22:03] [Server thread/INFO]: [Custom-Commands] 未定义指令组 qwq
+```
+输入正确的指令组名但没有任何分支可以匹配输入格式，将会输出所有该用户可用的分支格式：
+```log
+>ccsr test
+[11:20:13] [Server thread/INFO]: [Custom-Commands] 未在指令组 test 中找到能与当前参数列表匹配的指令
+[11:20:13] [Server thread/INFO]: [Custom-Commands] 当前在指令组 test 中加载的指令有：
+[11:20:13] [Server thread/INFO]: [Custom-Commands] /ccsr test something {arg1} {arg2} tail {arg3}
+[11:20:13] [Server thread/INFO]: [Custom-Commands] /ccsr test something {arg1}
+```
+输入匹配第一种分支`/ccsr test something {arg1} {arg2} tail {arg3}`，则自动执行该分支下的指令： `say {arg1} {arg2}` 和 `say {arg3}`，并显示 `a string will be send to command sender after all parsed commands executed.` 信息：
+```log
+>ccsr test something qwq orz tail qwqw!
+[11:24:32] [Server thread/INFO]: [Server] qwq orz
+[11:24:32] [Server thread/INFO]: [Server] qwqw!
+[11:24:32] [Server thread/INFO]: [Custom-Commands] a string will be send to command sender after all parsed commands executed.
+```
+打开调试模式后，输出相关解析信息：
+```log
+>ccsr test something qwq orz tail qwqw!
+[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >> variable-value list:
+[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > arg3:    qwqw!
+[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > arg2:    orz
+[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > arg1:    qwq
+[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >> parsed commands:
+[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > say qwq orz
+[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > say qwqw!
+[11:24:56] [Server thread/INFO]: [Server] qwq orz
+[11:24:56] [Server thread/INFO]: [Server] qwqw!
+[11:24:56] [Server thread/INFO]: [Custom-Commands] a string will be send to command sender after all parsed commands executed.
+```
+可见变量 `{arg1}``{arg2}``{arg3}` 的值符合预期。
+
+输入匹配另一种分支的指令后，可以成功匹配到对应分支：
+```log
+>ccsr test something qwq
+[11:22:31] [Server thread/INFO]: [Custom-Commands] DEBUG >> variable-value list:
+[11:22:31] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > arg1:    qwq
+[11:22:31] [Server thread/INFO]: [Custom-Commands] DEBUG >> parsed commands:
+[11:22:31] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > say qwq
+[11:22:31] [Server thread/INFO]: [Server] qwq
+[11:22:31] [Server thread/INFO]: [Custom-Commands] 成功执行 test 组中的 branch2 指令
+```
+如果修改设置，使得多种分支能够同时被匹配，则会输出错误：
+配置文件：
+```yaml
+commands:
+  # ...
+  test:
+    branch1:
+      format: 'something {arg1} {arg2} tail {arg3}'
+      result: 'a string will be send to command sender after all parsed commands executed.'
+      actions:
+        - 'say {arg1} {arg2}'
+        - 'say {arg3}'
+    branch2:
+      format: 'something {arg1} {arg2} {arg3} {arg4}'
+      actions:
+        - 'say {arg1}'
+  # ...
+```
+输入 `/ccsr test something a b tail d` 后的输出：
+```log
+>ccsr test something a b tail d
+[11:42:38] [Server thread/INFO]: [Custom-Commands] 有 2 个指令与之匹配，请修改设置以消除歧义。
+[11:42:38] [Server thread/INFO]: [Custom-Commands] /ccsr test something {arg1} {arg2} tail {arg3}
+[11:42:38] [Server thread/INFO]: [Custom-Commands] /ccsr test something {arg1} {arg2} {arg3} {arg4}
+```
+可见此输出符合预期。极大地简化了指令输入。
+
+## 前置插件
+暂无。<br>
+发布下一个版本之后，可能会需要 `PlaceholderAPI`。
+
+```log
+>ccsr test something qwq orz tail qwqw!
+[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >> variable-value list:
+[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > arg3:    qwqw!
+[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > arg2:    orz
+[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > arg1:    qwq
+[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >> parsed commands:
+[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > say qwq orz
+[11:24:56] [Server thread/INFO]: [Custom-Commands] DEBUG >>     > say qwqw!
+[11:24:56] [Server thread/INFO]: [Server] qwq orz
+[11:24:56] [Server thread/INFO]: [Server] qwqw!
+[11:24:56] [Server thread/INFO]: [Custom-Commands] a string will be send to command sender after all parsed commands executed.
+```
+
+## 插件指令
+所有格式是 `/ccs <config | run> <remain-arguments>` 的指令都可以被简化为 `/ccs<c | r> <remain-arguments>`.，例如 `/ccs config` 可以简化为 `/ccsc`。<br>
+`CCSC` 也就是 `CustomCommandS Config`， `CCSR` 是 `CustomCommandS Run`
+
+* `/ccs reload`                                 重载所有设置
+* `/ccs version`                                显示插件名、版本号等信息
+* `/ccs debug`                                  开关调试模式
+
+* `/ccsc val <variable-name>`                   查找 `config.yml` 中的设置项 `<variable-name>`，并显示其值。
+* `/ccsc val <variable-name> <set-to>`          设置 `config.yml` 中的设置项 `<variable-name>` 的值为 `<set-to>`。
+
+* `/ccsr <command-name> [arguments-list]`       执行在 `commands.yml` 内定义的指令 `<command-name> `。
 ## 配置文件
 ### config.yml
 默认的 `config.yml` 的内容是：
