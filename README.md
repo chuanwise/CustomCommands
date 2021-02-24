@@ -4,6 +4,7 @@ CustomCommands 插件也叫 CCS（CustomCommandS）或 Custom-Commands 等，允
 * 插件 QQ 群：`1028582500`
 * 作者：椽子。
 * 明城京联合太学，保留所有权利。
+* 欢迎<b>在显眼处注明出处</b>的情况下非商用转载。
 
 ## 目录
 * [基本概念](#基本概念)
@@ -26,6 +27,10 @@ CustomCommands 插件也叫 CCS（CustomCommandS）或 Custom-Commands 等，允
   * [config.yml](#config.yml)
   * [commands.yml](#commands.yml)
 * [权限节点](#权限节点)
+* [画大饼](#画大饼)
+  * [已经开发完成的功能](#已经开发完成的功能)
+  * [正在开发的功能](#正在开发的功能)
+  * [可能要增加的功能](#可能要增加的功能)
 * [联系方式](#联系方式)
 * [更新日志](#更新日志)
   * [2.0](#2.0)
@@ -170,6 +175,7 @@ commands:
 * `/ccsc val <variable-name> <set-to>`          设置 `config.yml` 中的设置项 `<variable-name>` 的值为 `<set-to>`。
 
 * `/ccsr <command-name> [arguments-list]`       执行在 `commands.yml` 内定义的指令 `<command-name> `。
+
 ## 配置文件
 ### config.yml
 默认的 `config.yml` 的内容是：
@@ -257,7 +263,7 @@ commands:
 为了保护你的服务器，在设计 actions 时，<b>必须</b> 在添加额外的 `/ccsr` 时仔细考虑。
 
 ### usage（选填）
-默认值：`/ccsr <指令名> <解析规则>`。
+默认值：`/ccsr <指令组名> <分支名> <解析规则>`。
 
 在上面的 `pex-group-set` 命令中，`usage` 的值是 `/ccsr pex-group-set {user_name} {group_name}`
 
@@ -346,6 +352,21 @@ commands:
 * `ccs.run.<指令组名>.<指令分支名>`: 使用指令组 `指令组名` 中的 `指令分支名` 的权限。
 * `ccs.config.val.set`: 设置一个项目的权限
 * `ccs.config.val.look`: 查看一个项目的值的权限
+
+## 画大饼
+欢迎提交 issue 反馈你希望增加的功能。
+
+### 已经开发完成的功能
+下面枚举的功能将在下一个版本更新时发布。
+1. 在 `actions` 中使用类似 `@sleep 100` 的指令让 `CCS` 等待一会儿再执行下一个指令的特殊语句。
+
+### 正在开发的功能
+1. 使用正则表达式检查变量名。
+
+### 可能要增加的功能
+下面枚举的功能我有相关想法，但是不知道实际使用性如何，需要大家的反馈才会决定是否要开发。
+1. 允许直接使用 `/<指令组名> <分支名> [参数列表]` 的形式执行指令，无需使用 `/ccsr`
+1. 不能在 `format` 解析获得的默认变量。例如 `{user_name}`，`{world_name}`。
 
 ## 联系方式
 * QQ group（QQ 群）:  `1028582500`

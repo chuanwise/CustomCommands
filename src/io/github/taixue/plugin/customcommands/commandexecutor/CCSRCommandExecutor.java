@@ -17,6 +17,10 @@ import java.util.Objects;
  */
 public class CCSRCommandExecutor implements CommandExecutor {
 
+    public boolean scriptRunner(String script) {
+        return true;
+    }
+
     @Override
     public boolean onCommand(CommandSender commandSender, org.bukkit.command.Command command, String s, String[] strings) {
         if (strings.length >= 1) {
@@ -85,6 +89,20 @@ public class CCSRCommandExecutor implements CommandExecutor {
                 }
 
                 for (String action : actionStrings) {
+                    if (action.startsWith("@")) {
+                        if (action.startsWith("@sleep")) {
+                            Messages.setVariable("script", "@sleep");
+                            if (action.matches("@sleep\\s+\\d+")) {
+                                int time = Integer.parseInt(action.substring(action.indexOf(" ") + 1));
+                                Thread.sleep(time);
+                            }
+                            else {
+                                Messages.setVariable("error", "缺少必要的时间参数");
+                                Messages.sendMessage(commandSender, "scriptSyntaxError");
+                            }
+                        }
+                        continue;
+                    }
                     try {
                         switch (customCommand.getIdentify()) {
                             case AUTO:

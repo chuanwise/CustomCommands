@@ -40,4 +40,5 @@ public class Language {
 
         public String redefinedGroup;
         public String redefinedCommand;
+        public String scriptSyntaxError;
 }

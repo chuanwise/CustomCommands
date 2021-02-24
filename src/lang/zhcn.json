@@ -37,5 +37,6 @@
   "noAnyLoadedCommand": "没有任何自定义指令，或 commands.yml 尚未重载。若希望重载，请使用 /ccs reload",
 
   "redefinedGroup": "重定义指令组：§e{group}§r",
-  "redefinedCommand": "在指令组 §e{group}§r 中重定义指令：§e{command}§r"
+  "redefinedCommand": "在指令组 §e{group}§r 中重定义指令：§e{command}§r",
+  "scriptSyntaxError": "脚本 {script} 语法错误：{error}"
 }
