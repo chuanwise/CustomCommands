@@ -1,5 +1,6 @@
 package io.github.taixue.plugin.customcommands.config;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -10,7 +11,7 @@ import java.util.Objects;
 
 public abstract class Config {
     protected FileConfiguration fileConfiguration;
-    protected MemorySection configSection;
+    protected ConfigurationSection configSection;
     protected File file;
 
     public Config(File file, String head) {
@@ -23,7 +24,7 @@ public abstract class Config {
         return fileConfiguration;
     }
 
-    public MemorySection getConfigSection() {
+    public ConfigurationSection getConfigSection() {
         return configSection;
     }
 

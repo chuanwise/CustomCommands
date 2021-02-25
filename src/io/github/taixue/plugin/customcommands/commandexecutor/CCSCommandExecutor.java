@@ -23,7 +23,10 @@ public class CCSCommandExecutor implements CommandExecutor {
                     Messages.sendMessageString(commandSender, "Author: " + Plugin.AUTHOR);
                     Messages.sendMessageString(commandSender, "Organization: " + Plugin.ORGANIZATION);
                     Messages.sendMessageString(commandSender, "Github: " + Plugin.GITHUB);
+                    Messages.sendMessageString(commandSender, "Mcbbs: " + Plugin.MCBBS);
                     Messages.sendMessageString(commandSender, "QQ group: " + Plugin.QQ_GROUP);
+
+                    Messages.sendMessageString(commandSender, "Remember to give me a star :)");
                     return true;
                 }
                 else {
@@ -31,8 +34,8 @@ public class CCSCommandExecutor implements CommandExecutor {
                 }
             }
             if (strings[0].equalsIgnoreCase("reload")) {
-                Messages.setNewVariable("permission", "ccs.reload");
-                if (commandSender.hasPermission("ccs.reload")) {
+                Messages.setNewVariable("permission", "ccs.config.reload");
+                if (commandSender.hasPermission("ccs.config.reload")) {
                     Plugin.reload();
                     Messages.infoString(commandSender.getName() + " reloaded CustomCommands.");
                     Messages.sendMessageString(commandSender, "CustomCommands reload completely!");
@@ -42,8 +45,8 @@ public class CCSCommandExecutor implements CommandExecutor {
                 return true;
             }
             if (strings[0].equalsIgnoreCase("debug")) {
-                Messages.setNewVariable("permission", "ccs.debug");
-                if (commandSender.hasPermission("ccs.debug")) {
+                Messages.setNewVariable("permission", "ccs.config.debug");
+                if (commandSender.hasPermission("ccs.config.debug")) {
                     if (Plugin.debug) {
                         Messages.sendMessageString(commandSender, "Debug: off");
                     } else {

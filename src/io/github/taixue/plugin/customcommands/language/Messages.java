@@ -19,7 +19,6 @@ public class Messages {
 
     private static Language language;
     private static Logger logger;
-    private static int MAX_INTERSECTIONS = 10;
 
     private static Map<String, String> environment = new HashMap<>();
 
@@ -27,25 +26,11 @@ public class Messages {
         try {
             language = JSON.parseObject(Plugin.plugin.getResource(Paths.LANG_DIR + Paths.SPLIT + languageCode + ".json"),
                     Language.class);
-
-            // replace all variable appearing in other message
-            Field[] languageClassFields = Language.class.getDeclaredFields();
-            for (int index = 0; index < languageClassFields.length; index ++) {
-                Field message = languageClassFields[index];
-                for (int i = 0; i < languageClassFields.length; i ++) {
-                    for (int counter = 0;
-                         ((String) message.get(language)).contains("{") && counter < MAX_INTERSECTIONS;
-                         counter++) {
-                        message.set(language,
-                                ((String) message.get(language)).replaceAll("\\{" + languageClassFields[i].getName() + "\\}",
-                                        ((String) languageClassFields[i].get(language))));
-                    }
-                }
-            }
             return true;
         }
         catch (Exception exception) {
             severeString("Fail to load language file: " + language + ".json " + ", because: " + exception);
+            exception.printStackTrace();
             return false;
         }
     }
@@ -59,11 +44,16 @@ public class Messages {
     }
 
     public static void setException(@NotNull Exception exception) {
-        setVariable("exception", exception.toString());
+        setVariable("exception", exception.getClass().getName());
+        setVariable("exceptionMessage", exception.getMessage());
     }
 
     public static void setVariable(@NotNull String variableName, @NotNull String value) {
         environment.put(variableName, value);
+    }
+
+    public static void setVariable(@NotNull String variableName, int value) {
+        setVariable(variableName, Integer.toString(value));
     }
 
     public static void setNewVariable(@NotNull String variableName, @NotNull String value) {
@@ -122,20 +112,27 @@ public class Messages {
         }
     }
 
-    public static void sendMessageString(@NotNull CommandSender sender, @NotNull String message) {
-        sender.sendMessage(language.messageHead + message);
+    public static void sendMessageString(@NotNull CommandSender sender, String message) {
+        if (Objects.isNull(language)) {
+            sender.sendMessage("Unexpected error: cannot load language file, please check if syntax errors exist.");
+            sender.sendMessage("[" + Plugin.NAME + "]" + message);
+            severeString("Unexpected error: cannot load language file, please check if syntax errors exist.");
+        }
+        else {
+            sender.sendMessage(language.messageHead + message);
+        }
     }
 
-    public static void sendMessageStringAndLog(@NotNull CommandSender sender, @NotNull String message) {
+    public static void sendMessageStringAndLog(@NotNull CommandSender sender, String message) {
         sendMessage(sender, message);
         infoString(sender.getName() + " << " + message);
     }
 
-    public static void sendMessage(@NotNull CommandSender sender, @NotNull String messageName) {
+    public static void sendMessage(@NotNull CommandSender sender, String messageName) {
         sendMessageString(sender, replaceVariableLanguage(messageName));
     }
 
-    public static void sendMessageAndLog(@NotNull CommandSender sender, @NotNull String messageName) {
+    public static void sendMessageAndLog(@NotNull CommandSender sender, String messageName) {
         sendMessageStringAndLog(sender, replaceVariableLanguage(messageName));
     }
 

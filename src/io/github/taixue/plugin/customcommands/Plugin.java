@@ -11,17 +11,17 @@ import io.github.taixue.plugin.customcommands.util.Files;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;
-import java.io.IOException;
 
 
 public class Plugin {
     private Plugin() {}
 
-    public static final String VERSION = "2.0";
+    public static final String VERSION = "3.0";
     public static final String NAME = "CustomCommands";
     public static final String AUTHOR = "Chuanwise";
     public static final String ORGANIZATION = "Taixue";
     public static final String GITHUB = "https://github.com/Chuanwise/CustomCommands";
+    public static final String MCBBS = "https://www.mcbbs.net/thread-1172706-1-1.html";
     public static final String QQ_GROUP = "1028582500";
 
     public static CustomCommandPlugin plugin;
@@ -30,6 +30,7 @@ public class Plugin {
     public static CommandsConfig commandsConfig;
 
     public static boolean debug = false;
+    public static boolean autoSave = true;
 
     public static final CCSCommandExecutor CCS_COMMAND_EXECUTOR = new CCSCommandExecutor();
     public static final CCSCCommandExecutor CCSC_COMMAND_EXECUTOR = new CCSCCommandExecutor();
@@ -57,16 +58,18 @@ public class Plugin {
         commandsFile = new File(plugin.getDataFolder(), Paths.COMMANDS);
 
         Messages.infoString("----------[" + NAME + " " + VERSION +"]----------");
-        Messages.infoString("Hello! Nice to meet you!");
-        Messages.infoString("CustomCommands is written by Chuanwise, all rights reserved by Chuanwise and Taixue.");
-        Messages.infoString("You can support us in " + GITHUB + " :)");
-        Messages.infoString("Join the QQ group: " + QQ_GROUP + " to get the newest update and some tech-suppositions.");
+        Messages.infoString("\033[1;33mNice to meet you! \033[0m");
+        Messages.infoString("\033[1;36mCustomCommands is written by Chuanwise, open source under GPL GNU license \033[0m");
+        Messages.infoString("\033[1;36mYou can support us in following websites:  \033[0m");
+        Messages.infoString("\033[1;36mGitHub: " + GITHUB + " \033[0m\033[1;33m (Remember to give me a star :> if you like this plugin) \033[0m");
+        Messages.infoString("\033[1;36mMCBBS: " + MCBBS + " \033[0m");
+        Messages.infoString("\033[1;36mJoin the QQ group: " + QQ_GROUP + " to get the newest update and some tech-suppositions. \033[0m");
         Messages.infoString("---------- loading ----------");
-        Messages.infoString("loading config...");
+        Messages.infoString("\033[1;34mloading config... \033[0m");
         loadConfig();
-        Messages.infoString("loading language...");
-        loadMessage();
-        Messages.infoString("loading commands...");
+        Messages.infoString("\033[1;34mloading language... \033[0m");
+        loadLanguage();
+        Messages.infoString("\033[1;34mloading commands... \033[0m");
         loadCommands();
         Messages.infoString("------ load configurations completely :) ------");
     }
@@ -91,13 +94,14 @@ public class Plugin {
             }
             pluginConfig = new PluginConfig(configFile, "config");
             debug = ((Boolean) pluginConfig.get("debug", false));
+            autoSave = ((Boolean) pluginConfig.get("auto-save", true));
         }
         catch (YAMLException exception) {
             exception.printStackTrace();
         }
     }
 
-    private static boolean loadMessage() {
+    private static boolean loadLanguage() {
         Messages.setLogger(Plugin.plugin.getLogger());
         return Messages.setLanguage(((String) pluginConfig.get("lang", "en")));
     }
@@ -115,8 +119,9 @@ public class Plugin {
         try {
             pluginConfig.save();
         }
-        catch (IOException ioException) {
-            Messages.severeString(ioException + " at saving config.yml");
+        catch (Exception exception) {
+            Messages.severeString(exception + " at saving config.yml");
+            exception.printStackTrace();
         }
     }
 
@@ -124,22 +129,25 @@ public class Plugin {
         try {
             commandsConfig.save();
         }
-        catch (IOException ioException) {
-            Messages.severeString(ioException + " at saving commands.yml");
+        catch (Exception exception) {
+            Messages.severeString(exception + " at saving commands.yml");
+            exception.printStackTrace();
         }
     }
 
     public static void close() {
         Messages.infoString("----------[" + NAME + " " + VERSION +"]----------");
-        Messages.infoString("saving config.yml");
+        Messages.infoString("\033[1;33msaving config.yml \033[0m");
         saveConfig();
-        Messages.infoString("saving commands.yml");
+        Messages.infoString("\033[1;33msaving commands.yml \033[0m");
         saveCommands();
         Messages.infoString("------ all configuration saved ------");
 
-        Messages.infoString("CustomCommands is written by Chuanwise, all rights reserved by Chuanwise and Taixue.");
-        Messages.infoString("You can support us in " + GITHUB + " :)");
-        Messages.infoString("Join the QQ group: " + QQ_GROUP + " to get the newest update and some tech-suppositions.");
+        Messages.infoString("\033[1;36mYou can support us in following websites:  \033[0m");
+        Messages.infoString("\033[1;29mGitHub: " + GITHUB + " \033[0m");
+        Messages.infoString("\033[1;29mMCBBS: " + MCBBS + " \033[0m");
+        Messages.infoString("\033[1;29mJoin the QQ group: \033[1;33m " + QQ_GROUP + " \033[1;29m to get the newest update and some tech-suppositions. \033[0m");
+
         Messages.infoString("------ Think you for using CustomCommands, see you :) ------");
     }
 

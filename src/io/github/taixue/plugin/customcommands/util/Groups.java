@@ -7,7 +7,9 @@ import io.github.taixue.plugin.customcommands.language.Messages;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.MemorySection;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class Groups {
     private Groups() {}
@@ -20,27 +22,38 @@ public class Groups {
         Messages.setVariable("group", result.getName());
 
         Map<String, Object> commandMap = memorySection.getValues(false);
+        Set<String> loadedCommands = new HashSet<>();
         for (String commandName: commandMap.keySet()) {
             Messages.setVariable("command", commandName);
             try {
                 MemorySection subMemorySection = ((MemorySection) commandMap.get(commandName));
 
-                if (Commands.isLegalCommandMemorySection(subMemorySection)) {
-                    Command command = Commands.loadFromMemorySection(result, subMemorySection);
-                    if (command.isLegalParameters()) {
-                        result.addCommand(command);
-                    }
-                    else {
-                        Messages.severeLanguage("illegalParameterName");
-                    }
+                if (loadedCommands.contains(commandName)) {
+                    Messages.severeLanguage("redefinedCommands");
                 }
                 else {
-                    Messages.severeLanguage("wrongFormatForCommand");
+                    if (Commands.isLegalCommandMemorySection(subMemorySection)) {
+                        loadedCommands.add(commandName);
+                        Command command = Commands.loadFromMemorySection(result, subMemorySection);
+                        if (command.isLegalParameters()) {
+                            if (command.isLegalMatches()) {
+                                result.addCommand(command);
+                            }
+                            else {
+                                Messages.severeLanguage("matchesError");
+                            }
+                        } else {
+                            Messages.severeLanguage("illegalParameterName");
+                        }
+                    } else {
+                        Messages.severeLanguage("wrongFormatForCommand");
+                    }
                 }
             }
             catch (Exception exception) {
                 Messages.setException(exception);
                 Messages.severeLanguage("exceptionInLoadingCommand");
+                exception.printStackTrace();
             }
         }
         return result;

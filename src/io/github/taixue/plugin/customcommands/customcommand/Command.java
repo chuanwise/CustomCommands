@@ -6,6 +6,7 @@ import io.github.taixue.plugin.customcommands.util.Strings;
 import org.bukkit.command.CommandSender;
 
 import java.util.*;
+import java.util.regex.PatternSyntaxException;
 
 public class Command {
     // 本指令所属的组
@@ -17,6 +18,7 @@ public class Command {
     private String[] actions;
 
     private Map<String, String> variableValues = new HashMap<>();
+    private Map<String, String> matches = new HashMap<>();
 
     // 格式错误时返回的内容
     private String usageString;
@@ -32,6 +34,14 @@ public class Command {
     }
 
     private Identify identify = Identify.AUTO;
+
+    public Command(String commandName) {
+        setName(commandName);
+    }
+
+    public Command() {
+        setName("");
+    }
 
     /**
      * 解析并将变量值存储
@@ -99,7 +109,7 @@ public class Command {
         ArrayList<String> actionStrings = new ArrayList<>();
 
         for (String cmd: actions) {
-            actionStrings.add(replaceVariables(cmd));
+            actionStrings.add(Messages.replaceVariableString(replaceVariables(cmd)));
         }
         return actionStrings;
     }
@@ -123,6 +133,25 @@ public class Command {
             if (parameter.charAt(0) != '{' && !parameter.equals(argument)) {
                 return false;
             }
+            if (parameter.charAt(0) == '{') {
+                String parameterName = parameter.substring(1, parameter.length() - 1);
+                Messages.setVariable("parameter", parameterName);
+
+                if (matches.containsKey(parameterName)) {
+                    try {
+                        String regex = matches.get(parameterName);
+                        Messages.setVariable("regex", regex);
+                        if (!argument.matches(regex)) {
+                            return false;
+                        }
+                    } catch (PatternSyntaxException exception) {
+                        Messages.setException(exception);
+                        Messages.severeLanguage("exceptionInMatchingArgument");
+                        exception.printStackTrace();
+                        return false;
+                    }
+                }
+            }
         }
 
         if (argIndex < arguments.length && !parameters[parameters.length - 1].equals("{remain}")) {
@@ -134,10 +163,6 @@ public class Command {
         return true;
     }
 
-    /**
-     * 检查 format 的正误
-     * @return
-     */
     public boolean isLegalParameters() {
         Set<String> variableNames = new HashSet<>();
         for (int index = 0; index < parameters.length; index++) {
@@ -159,6 +184,33 @@ public class Command {
                 else {
                     return false;
                 }
+            }
+        }
+        return true;
+    }
+
+    public boolean isLegalMatches() {
+        Set<String> variableNames = new HashSet<>();
+        for (String parameter: parameters) {
+            if (parameter.charAt(0) == '{') {
+                variableNames.add(parameter.substring(1, parameter.length() - 1));
+            }
+        }
+        for (String regexHead: matches.keySet()) {
+            Messages.setVariable("parameter", regexHead);
+            if (regexHead.equalsIgnoreCase("remain")) {
+                return false;
+            }
+            if (!variableNames.contains(regexHead)) {
+                return false;
+            }
+            try {
+                "".matches(matches.get(regexHead));
+            }
+            catch (PatternSyntaxException exception) {
+                Messages.setException(exception);
+                Messages.severeLanguage("regexSyntaxError");
+                return false;
             }
         }
         return true;
@@ -204,6 +256,7 @@ public class Command {
             }
         }
         this.parameters = parameters.toArray(new String[0]);
+        setUsageToDefault();
     }
 
     public void setActions(String[] actions) {
@@ -268,5 +321,57 @@ public class Command {
 
     public String getFormattedResultString() {
         return replaceVariables(getResultString());
+    }
+
+    public void addAction(String actionString) {
+        actions = Arrays.copyOf(actions, actions.length + 1);
+        actions[actions.length - 1] = actionString;
+    }
+
+    public void removeAction(String actionString) {
+        List<String> actionList = Arrays.asList(actions);
+        actionList.remove(actionString);
+        actions = actionList.toArray(new String[0]);
+    }
+
+    public void addPermission(String permissionString) {
+        permissions = Arrays.copyOf(permissions, permissions.length + 1);
+        permissions[permissions.length - 1] = permissionString;
+    }
+
+    public void removePermissions(String permissionString) {
+        List<String> permissionList = Arrays.asList(permissions);
+        permissionList.remove(permissionString);
+        permissions = permissionList.toArray(new String[0]);
+    }
+
+    public boolean containsAction(String actionString) {
+        for (String action: actions) {
+            if (action.equals(actionString)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsPermission(String permissionString) {
+        for (String action: permissions) {
+            if (action.equals(permissionString)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setMatches(Map<String, String> matches) {
+        this.matches = matches;
+    }
+
+    public Map<String, String> getMatches() {
+        return matches;
+    }
+
+    public void setUsageToDefault() {
+        setUsageString("/ccsr " + getGroup().getName() + " " + getFormat());
     }
 }

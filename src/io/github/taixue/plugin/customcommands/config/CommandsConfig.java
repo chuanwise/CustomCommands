@@ -7,14 +7,13 @@ import io.github.taixue.plugin.customcommands.customcommand.Group;
 import io.github.taixue.plugin.customcommands.language.Messages;
 import io.github.taixue.plugin.customcommands.util.Groups;
 import io.github.taixue.plugin.customcommands.util.Strings;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 
 public class CommandsConfig extends Config {
 
@@ -36,11 +35,11 @@ public class CommandsConfig extends Config {
             Set<String> loadedGroups = new HashSet<>();
             for (String groupName: groupsMap.keySet()) {
                 Messages.setVariable("group", groupName);
-                if (Strings.isLegalGroupName(groupName)) {
-                    if (loadedGroups.contains(groupName)) {
-                        Messages.severeLanguage("illegalGroupName");
-                    }
-                    else {
+                if (loadedGroups.contains(groupName)) {
+                    Messages.severeLanguage("redefinedGroups");
+                }
+                else {
+                    if (Strings.isLegalGroupName(groupName)) {
                         loadedGroups.add(groupName);
                         try {
                             addGroup(Groups.loadFromMemorySection(((MemorySection) groupsMap.get(groupName))));
@@ -49,17 +48,20 @@ public class CommandsConfig extends Config {
                         } catch (Exception exception) {
                             Messages.setException(exception);
                             Messages.severeLanguage("exceptionInLoadingGroup");
+                            exception.printStackTrace();
                         }
+
                     }
-                }
-                else {
-                    Messages.severeLanguage("illegalGroupName");
+                    else {
+                        Messages.severeLanguage("illegalGroupName");
+                    }
                 }
             }
         }
         catch (Exception exception) {
             Messages.setException(exception);
             Messages.severeLanguage("exceptionInLoadingFile");
+            exception.printStackTrace();
         }
     }
 
@@ -99,5 +101,29 @@ public class CommandsConfig extends Config {
 
     public ArrayList<Group> getGroups() {
         return groups;
+    }
+
+    public void removeGroup(String groupName) {
+        groups.remove(getGroup(groupName));
+    }
+
+    @Override
+    public void save() throws IOException {
+//        fileConfiguration.set("commands", null);
+        configSection = fileConfiguration.createSection("commands");
+        for (Group group: groups) {
+            ConfigurationSection groupSection = configSection.createSection(group.getName());
+            for (Command command: group.getCommands()) {
+                ConfigurationSection commandSection = groupSection.createSection(command.getName());
+                commandSection.set("format", command.getFormat());
+                commandSection.set("usage", command.getUsageString());
+                commandSection.set("actions", command.getActions());
+//                commandSection.set("matches", command.getMatches());
+                commandSection.set("identify", command.getIdentifyString());
+                commandSection.set("result", command.getResultString());
+                commandSection.set("permissions", command.getPermissions());
+            }
+        }
+        super.save();
     }
 }

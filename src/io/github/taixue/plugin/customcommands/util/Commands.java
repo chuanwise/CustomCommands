@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.MemorySection;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Commands {
@@ -57,6 +58,14 @@ public class Commands {
             result.setPermissions(new String[]{"ccs.run." + addTo.getName() + "." + result.getName()});
         }
 
+        result.setMatches(new HashMap<>());
+//        if (memorySection.contains("matches")) {
+//            result.setMatches((Map<String, String>) (Object) ((MemorySection) memorySection.get("matches")).getValues(false));
+//        }
+//        else {
+//            result.setMatches(new HashMap<>());
+//        }
+
         return result;
     }
 
@@ -102,10 +111,33 @@ public class Commands {
                     ((String) memorySection.get("identify")).matches("console|auto"))) {
                 return false;
             }
+            if (memorySection.contains("usage") && !(memorySection.get("usage") instanceof String)) {
+                return false;
+            }
+            if (memorySection.contains("result") && !(memorySection.get("result") instanceof String)) {
+                return false;
+            }
+            if (memorySection.contains("matches") && !(memorySection.get("matches") instanceof List)) {
+                return false;
+            }
             return true;
         }
         else {
             return false;
         }
+    }
+
+    @NotNull
+    public static Command getDefaultCommand(@NotNull Group group, String name) {
+        Command command = new Command(name);
+        Messages.setVariable("group", group.getName());
+        Messages.setVariable("command", command.getName());
+        command.setFormat("{remain}");
+        command.setActions(new String[0]);
+        command.setUsageString("/ccsr " + group.getName() + " " + command.getFormat());
+        command.setIdentify(Command.Identify.AUTO);
+        command.setResultString(Messages.replaceVariableLanguage("defaultResultString"));
+        command.setPermissions(new String[]{"ccs.run." + group.getName() + "." + command.getName()});
+        return command;
     }
 }

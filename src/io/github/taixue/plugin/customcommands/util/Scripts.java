@@ -30,6 +30,7 @@ public class Scripts {
                 ((SleepScript) result).setTime(Integer.parseInt(arguments[0]));
             }
         }
-        else if (name.equalsIgnoreCase(""))
+//        else if (name.equalsIgnoreCase(""))
+        return null;
     }
 }

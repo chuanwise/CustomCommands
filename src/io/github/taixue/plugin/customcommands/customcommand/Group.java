@@ -9,12 +9,23 @@ public class Group {
     private String name;
     private ArrayList<Command> commands = new ArrayList<>();
 
+    public Group() {
+        this("");
+    }
+
+    public Group(String name) {
+        setName(name);
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(@NotNull String name) {
         this.name = name;
+        for (Command command: commands) {
+            command.setUsageToDefault();
+        }
     }
 
     public ArrayList<Command> getCommands() {
@@ -62,5 +73,9 @@ public class Group {
             }
         }
         return null;
+    }
+
+    public void removeCommand(@NotNull String commandName) {
+        commands.remove(getCommand(commandName));
     }
 }

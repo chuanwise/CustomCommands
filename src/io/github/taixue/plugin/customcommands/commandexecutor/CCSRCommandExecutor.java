@@ -23,10 +23,17 @@ public class CCSRCommandExecutor implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, org.bukkit.command.Command command, String s, String[] strings) {
+        Messages.clearVariables();
         if (strings.length >= 1) {
+            Messages.setVariable("player", commandSender.getName());
+            if (commandSender instanceof Player) {
+                Messages.setVariable("displayName", ((Player) commandSender).getDisplayName());
+                Messages.setVariable("UUID", ((Player) commandSender).getUniqueId().toString());
+                Messages.setVariable("world", ((Player) commandSender).getWorld().getName());
+            }
             String groupName = strings[0];
             Group group = Plugin.commandsConfig.getGroup(groupName);
-            Messages.setNewVariable("group", groupName);
+            Messages.setVariable("group", groupName);
 
             if (Objects.isNull(group)) {
                 Messages.sendMessage(commandSender, "undefinedGroup");
@@ -36,7 +43,7 @@ public class CCSRCommandExecutor implements CommandExecutor {
                 ArrayList<Command> commands = Commands.screenUsableCommand(commandSender, group.getCommands(strings));
 
                 if (commands.isEmpty()) {
-                    Messages.sendMessage(commandSender, "commandNotFound");
+                    Messages.sendMessage(commandSender, "noMatchableCommand");
                     ArrayList<Command> allCommands = Commands.screenUsableCommand(commandSender, group.getCommands());
 
                     if (!allCommands.isEmpty()) {
@@ -89,6 +96,9 @@ public class CCSRCommandExecutor implements CommandExecutor {
                 }
 
                 for (String action : actionStrings) {
+                    if (Plugin.debug) {
+                        Messages.debugString(commandSender, "executing > " + action);
+                    }
                     if (action.startsWith("@")) {
                         if (action.startsWith("@sleep")) {
                             Messages.setVariable("script", "@sleep");
@@ -116,13 +126,14 @@ public class CCSRCommandExecutor implements CommandExecutor {
                                 commandSender.getServer().dispatchCommand(Plugin.plugin.getServer().getConsoleSender(), action);
                                 break;
                             default:
-                                Messages.sendMessage(commandSender, "wrongIdentify");
+                                Messages.sendMessage(commandSender, "illegalIdentify");
                                 break;
                         }
                     }
                     catch (Exception exception) {
                         Messages.setVariable("exception", exception.toString());
                         Messages.sendMessage(commandSender, "exceptionInExecutingCommand");
+                        exception.printStackTrace();
                     }
                 }
                 Messages.sendMessageString(commandSender, customCommand.getFormattedResultString());
