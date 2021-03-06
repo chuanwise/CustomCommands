@@ -36,8 +36,10 @@ public class PlayerQuitListener implements Listener {
 
     public void stopWaitPlayer(Player player) {
         UnloadPlayerEnvironmentThread thread = playerThreads.get(player.getUniqueId().toString());
-        thread.stop();
-        playerThreads.remove(player.getUniqueId().toString());
+        if (Objects.nonNull(thread)) {
+            thread.stop();
+            playerThreads.remove(player.getUniqueId().toString());
+        }
     }
 
     public boolean isWaiting(Player player) {

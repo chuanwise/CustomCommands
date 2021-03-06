@@ -1,0 +1,8 @@
+# see https://github.com/Chuanwise/CustomCommands
+
+config:
+  lang: 'zhcn'
+  debug: false
+  max-iterations: 10
+  auto-save: true
+  wait-for-unload: 10000

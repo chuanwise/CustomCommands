@@ -25,7 +25,8 @@ public class PlayerJoinListener implements Listener {
             if (!Environment.containsPlayer(player)) {
                 if (loadPlayerEnvironment(player)) {
                     Messages.infoLang("environmentLoaded");
-                } else {
+                }
+                else {
                     Messages.severeLanguage("failToLoadEnvironment");
                 }
             }
