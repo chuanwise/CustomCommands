@@ -1,5 +1,6 @@
 package org.taixue.customcommands.commandexecutor;
 
+import org.bukkit.entity.Player;
 import org.taixue.customcommands.Plugin;
 import org.taixue.customcommands.customcommand.Group;
 import org.taixue.customcommands.language.Messages;
@@ -24,7 +25,7 @@ public class CCSCCommandExecutor implements CommandExecutor {
             return false;
         }
 
-        if (strings[0].equalsIgnoreCase("val")) {
+        if (strings[0].equalsIgnoreCase("val") && strings.length > 1) {
             permissionNode = "ccs.config.val";
             Messages.setVariable("permission", permissionNode);
             if (commandSender.hasPermission(permissionNode)) {
@@ -133,10 +134,11 @@ public class CCSCCommandExecutor implements CommandExecutor {
             case 2:
                 Messages.setVariable("permission", "ccs.config.val.look");
                 if (commandSender.hasPermission("ccs.config.val.look")) {
-                    Object object = Plugin.pluginConfig.get("config." + valName, null);
+                    Object object = Plugin.pluginConfig.get(valName, null);
                     if (Objects.isNull(object)) {
                         Messages.sendMessage(commandSender, "wrongConfigItem");
-                    } else {
+                    }
+                    else {
                         Messages.sendMessage(commandSender, valName + " : " + object);
                     }
                 } else {
@@ -146,9 +148,10 @@ public class CCSCCommandExecutor implements CommandExecutor {
             case 3:
                 Messages.setVariable("permission", "ccs.config.val.set");
                 if (commandSender.hasPermission("ccs.config.val.set")) {
-                    Plugin.pluginConfig.set("config." + valName, strings[2]);
+                    Plugin.pluginConfig.set(valName, strings[2]);
                     Plugin.saveConfigFile();
                     Messages.sendMessage(commandSender, valName + " set to " + strings[2] + " completely!");
+                    Plugin.loadConfig();
                 } else {
                     Messages.sendMessage(commandSender, "lackPermission");
                 }

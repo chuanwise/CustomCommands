@@ -87,5 +87,9 @@
   "failToLoadEnvironment": "加载文件 {file} 中的环境失败",
   "loadedVariableTitle": "--- 环境 {environment} 中加载的变量 （{size} 个）---",
   "noAnyLoadedVariable": "该环境中没有加载任何变量",
-  "onlinePlayerEnvironmentsLoaded": "已加载所有在线玩家的环境"
+  "onlinePlayerEnvironmentsLoaded": "已加载所有在线玩家的环境",
+  "wattingPlayerLeave": "正在等待玩家 {player} 离开 {timeout} 秒后卸载玩家的私人变量表",
+  "unloadedPlayerEnvironment": "已卸载玩家 {player} 的私人变量表",
+  "interruptToWaitPlayerLeave": "玩家 {player} 加入服务器，停止等待卸载玩家的变量表",
+  "loadedMessageVariableTitle": "--- 全局消息环境中加载的变量 （{size} 个）---"
 }

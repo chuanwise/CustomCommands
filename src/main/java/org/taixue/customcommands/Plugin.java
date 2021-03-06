@@ -11,6 +11,7 @@ import org.taixue.customcommands.config.PluginConfig;
 import org.taixue.customcommands.language.Environment;
 import org.taixue.customcommands.language.Messages;
 import org.taixue.customcommands.listener.PlayerJoinListener;
+import org.taixue.customcommands.listener.PlayerQuitListener;
 import org.taixue.customcommands.util.Files;
 import org.taixue.customcommands.util.Paths;
 import org.yaml.snakeyaml.error.YAMLException;
@@ -18,7 +19,7 @@ import org.yaml.snakeyaml.error.YAMLException;
 import java.io.File;
 
 public class Plugin extends JavaPlugin {
-    public static final String VERSION = "3.1";
+    public static final String VERSION = "4.1";
     public static final String NAME = "CustomCommands";
     public static final String AUTHOR = "Chuanwise";
     public static final String ORGANIZATION = "Taixue";
@@ -33,6 +34,7 @@ public class Plugin extends JavaPlugin {
 
     public static boolean debug = false;
     public static boolean autoSave = true;
+    public static int waitForUnload = 5 * 60000;
 
     public static final CCSCommandExecutor CCS_COMMAND_EXECUTOR = new CCSCommandExecutor();
     public static final CCSCCommandExecutor CCSC_COMMAND_EXECUTOR = new CCSCCommandExecutor();
@@ -40,6 +42,7 @@ public class Plugin extends JavaPlugin {
     public static final CCSECommandExecutor CCSE_COMMAND_EXECUTOR = new CCSECommandExecutor();
 
     public static final PlayerJoinListener PLAYER_JOIN_LISTENER = new PlayerJoinListener();
+    public static final PlayerQuitListener PLAYER_QUIT_LISTENER = new PlayerQuitListener();
 
     private static File configFile;
     private static File commandsFile;
@@ -90,7 +93,7 @@ public class Plugin extends JavaPlugin {
         load(plugin);
     }
 
-    private static void loadConfig() {
+    public static void loadConfig() {
         try {
             if (!configFile.exists()) {
                 plugin.saveDefaultConfig();
@@ -98,6 +101,7 @@ public class Plugin extends JavaPlugin {
             pluginConfig = new PluginConfig(configFile, "config");
             debug = ((Boolean) pluginConfig.get("debug", false));
             autoSave = ((Boolean) pluginConfig.get("auto-save", true));
+            waitForUnload = ((Integer) pluginConfig.get("wait-for-unload", 5 * 60000));
         }
         catch (YAMLException exception) {
             exception.printStackTrace();
@@ -109,7 +113,7 @@ public class Plugin extends JavaPlugin {
         return Messages.setLanguage(((String) pluginConfig.get("lang", "en")));
     }
 
-    private static void loadCommands() {
+    public static void loadCommands() {
         if (!commandsFile.exists()) {
             if (!Files.fileCopy(Paths.COMMANDS, commandsFile)) {
                 Messages.severeString("cannot create the default commands.yml");
@@ -139,6 +143,7 @@ public class Plugin extends JavaPlugin {
     }
 
     public static void close() {
+        PLAYER_QUIT_LISTENER.shutdown();
         Messages.infoString("----------[" + NAME + " " + VERSION +"]----------");
         Messages.infoString("\033[1;33msaving config.yml \033[0m");
         saveConfigFile();
@@ -151,6 +156,7 @@ public class Plugin extends JavaPlugin {
 
     private static void registerEvents() {
         plugin.getServer().getPluginManager().registerEvents(PLAYER_JOIN_LISTENER, plugin);
+        plugin.getServer().getPluginManager().registerEvents(PLAYER_QUIT_LISTENER, plugin);
     }
 
     public static void loadOnlinePlayerEnvironment() {

@@ -90,4 +90,8 @@ public class Language {
         public String loadedVariableTitle;
         public String noAnyLoadedVariable;
         public String onlinePlayerEnvironmentsLoaded;
+        public String wattingPlayerLeave;
+        public String unloadedPlayerEnvironment;
+        public String interruptToWaitPlayerLeave;
+        public String loadedMessageVariableTitle;
 }

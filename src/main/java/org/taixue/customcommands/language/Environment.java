@@ -18,7 +18,15 @@ public class Environment {
     private static final Map<Player, Map<String, String>> environment = new HashMap<>();
 
     public static boolean containsPlayer(Player player) {
-        return environment.containsKey(player);
+        for (Player p: environment.keySet()) {
+            if (Objects.isNull(p)) {
+                continue;
+            }
+            if (p.getUniqueId().toString().equals(player.getUniqueId().toString())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void put(Player player, String variableName, String value) {
@@ -140,5 +148,9 @@ public class Environment {
 
     public static void clear() {
         environment.clear();
+    }
+
+    public static void unload(Player player) {
+        environment.remove(player);
     }
 }

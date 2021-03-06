@@ -65,6 +65,10 @@ public class Messages {
         return environment.getOrDefault(key, null);
     }
 
+    public static HashMap<String, String> getEnvironment() {
+        return environment;
+    }
+
     public static void clearVariables() {
         environment.clear();
     }

@@ -1,5 +1,6 @@
 package org.taixue.customcommands.listener;
 
+import org.taixue.customcommands.Plugin;
 import org.taixue.customcommands.language.Environment;
 import org.taixue.customcommands.language.Messages;
 import org.bukkit.entity.Player;
@@ -13,11 +14,21 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (Environment.containsPlayer(player) || loadPlayerEnvironment(player)) {
-            Messages.infoLang("environmentLoaded");
+
+        Messages.setVariable("player", player.getName());
+
+        if (Plugin.PLAYER_QUIT_LISTENER.isWaiting(player)) {
+            Plugin.PLAYER_QUIT_LISTENER.stopWaitPlayer(player);
+            Messages.infoLang("interruptToWaitPlayerLeave");
         }
         else {
-            Messages.severeLanguage("failToLoadEnvironment");
+            if (!Environment.containsPlayer(player)) {
+                if (loadPlayerEnvironment(player)) {
+                    Messages.infoLang("environmentLoaded");
+                } else {
+                    Messages.severeLanguage("failToLoadEnvironment");
+                }
+            }
         }
     }
 

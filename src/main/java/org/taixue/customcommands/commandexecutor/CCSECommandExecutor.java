@@ -9,6 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -72,6 +73,13 @@ public class CCSECommandExecutor implements CommandExecutor {
                     if (Objects.isNull(env) || env.isEmpty()) {
                         Messages.sendMessage(commandSender, "noAnyLoadedVariable");
                         return true;
+                    }
+                    HashMap<String, String> messageVariables = Messages.getEnvironment();
+
+                    Messages.setVariable("size", messageVariables.size());
+                    Messages.sendMessage(commandSender, "loadedMessageVariableTitle");
+                    for (String variable: messageVariables.keySet()) {
+                        Messages.sendMessageString(commandSender, "    > " + variable + ": " + messageVariables.get(variable));
                     }
 
                     Messages.setVariable("environment", "global");
