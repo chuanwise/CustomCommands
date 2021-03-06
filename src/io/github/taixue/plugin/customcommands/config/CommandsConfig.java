@@ -4,7 +4,7 @@ import com.sun.istack.internal.NotNull;
 import io.github.taixue.plugin.customcommands.Plugin;
 import io.github.taixue.plugin.customcommands.customcommand.Command;
 import io.github.taixue.plugin.customcommands.customcommand.Group;
-import io.github.taixue.plugin.customcommands.language.Messages;
+import io.github.taixue.plugin.customcommands.language.Formatter;
 import io.github.taixue.plugin.customcommands.util.Groups;
 import io.github.taixue.plugin.customcommands.util.Strings;
 import org.bukkit.configuration.ConfigurationSection;
@@ -29,14 +29,14 @@ public class CommandsConfig extends Config {
     }
 
     public void load() {
-        Messages.setNewVariable("file", file.getName());
+        Formatter.setNewVariable("file", file.getName());
         try {
             Map<String, Object> groupsMap = configSection.getValues(false);
             Set<String> loadedGroups = new HashSet<>();
             for (String groupName: groupsMap.keySet()) {
-                Messages.setVariable("group", groupName);
+                Formatter.setVariable("group", groupName);
                 if (loadedGroups.contains(groupName)) {
-                    Messages.severeLanguage("redefinedGroups");
+                    Formatter.severeLanguage("redefinedGroups");
                 }
                 else {
                     if (Strings.isLegalGroupName(groupName)) {
@@ -44,23 +44,23 @@ public class CommandsConfig extends Config {
                         try {
                             addGroup(Groups.loadFromMemorySection(((MemorySection) groupsMap.get(groupName))));
                         } catch (ClassCastException classCastException) {
-                            Messages.severeLanguage("wrongFormatForGroup");
+                            Formatter.severeLanguage("wrongFormatForGroup");
                         } catch (Exception exception) {
-                            Messages.setException(exception);
-                            Messages.severeLanguage("exceptionInLoadingGroup");
+                            Formatter.setException(exception);
+                            Formatter.severeLanguage("exceptionInLoadingGroup");
                             exception.printStackTrace();
                         }
 
                     }
                     else {
-                        Messages.severeLanguage("illegalGroupName");
+                        Formatter.severeLanguage("illegalGroupName");
                     }
                 }
             }
         }
         catch (Exception exception) {
-            Messages.setException(exception);
-            Messages.severeLanguage("exceptionInLoadingFile");
+            Formatter.setException(exception);
+            Formatter.severeLanguage("exceptionInLoadingFile");
             exception.printStackTrace();
         }
     }
@@ -116,14 +116,45 @@ public class CommandsConfig extends Config {
             for (Command command: group.getCommands()) {
                 ConfigurationSection commandSection = groupSection.createSection(command.getName());
                 commandSection.set("format", command.getFormat());
-                commandSection.set("usage", command.getUsageString());
                 commandSection.set("actions", command.getActions());
+
+                if (!isDefaultUsage(command)) {
+                    commandSection.set("usage", command.getUsageString());
+                }
 //                commandSection.set("matches", command.getMatches());
-                commandSection.set("identify", command.getIdentifyString());
-                commandSection.set("result", command.getResultString());
-                commandSection.set("permissions", command.getPermissions());
+
+                if (!isDefaultIdentify(command)) {
+                    commandSection.set("identify", command.getIdentifyString());
+                }
+
+                if (!isDefaultResult(command)) {
+                    commandSection.set("result", command.getResultString());
+                }
+
+                if (!isDefaultPermissions(command)) {
+                    commandSection.set("permissions", command.getPermissions());
+                }
             }
         }
         super.save();
+    }
+
+    public boolean isDefaultUsage(Command command) {
+        return command.getUsageString().equals("/ccsr " +
+                command.getGroup().getName() + " " +
+                command.getFormat());
+    }
+
+    public boolean isDefaultIdentify(Command command) {
+        return command.getIdentify() == Command.Identify.AUTO;
+    }
+
+    public boolean isDefaultPermissions(Command command) {
+        return command.getPermissions().length == 1 &&
+                command.getPermissions()[0].equals("ccs.run." + command.getGroup().getName() + "." + command.getName());
+    }
+
+    public boolean isDefaultResult(Command command) {
+        return command.getResultString().equals(Formatter.getVariable("defaultResultString"));
     }
 }

@@ -10,6 +10,7 @@ public class Language {
         public String matchesError;
         public String regexSyntaxError;
         public String illegalParameterName;
+        public String illegalVariableName;
         public String redefinedParameter;
         public String extraArgs;
         public String illegalIdentify;
@@ -25,11 +26,13 @@ public class Language {
         public String exceptionInParsingCommand;
         public String exceptionInSavingCommands;
         public String exceptionInMatchingArgument;
+        public String exceptionInSavingEnvironment;
+        public String exceptionInLoadingEnvironment;
         public String unknownException;
         public String groupNotFound;
         public String noMatchableCommand;
         public String multipleCommands;
-        public String unmatchableArguments;
+        public String noPermissionToMatch;
         public String loadedGroups;
         public String noAnyLoadedGroup;
         public String loadedCommand;
@@ -37,6 +40,8 @@ public class Language {
         public String redefinedGroups;
         public String redefinedCommands;
         public String scriptSyntaxError;
+        public String illegalScript;
+        public String unknownScript;
         public String groupAlreadyExist;
         public String groupAdded;
         public String groupRemoved;
@@ -70,4 +75,19 @@ public class Language {
         public String commandSummary;
         public String commandDetailsTitle;
         public String commandsSaved;
+        public String operatorMustBePlayer;
+        public String wrongEnvironment;
+        public String cannotLoadEnvironment;
+        public String unknownUUID;
+        public String environmentLoaded;
+        public String variableSet;
+        public String variableNotFound;
+        public String variableRemoved;
+        public String environmentCleared;
+        public String loadingEnvironment;
+        public String variableShouldBeString;
+        public String failToLoadEnvironment;
+        public String loadedVariableTitle;
+        public String noAnyLoadedVariable;
+        public String onlinePlayerEnvironmentsLoaded;
 }

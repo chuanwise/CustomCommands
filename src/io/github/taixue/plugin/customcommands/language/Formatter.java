@@ -6,21 +6,21 @@ import com.sun.istack.internal.Nullable;
 import io.github.taixue.plugin.customcommands.Plugin;
 import io.github.taixue.plugin.customcommands.path.Paths;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
 
 // waiting for finish
-public class Messages {
-    private Messages() {}
+public class Formatter {
+    private Formatter() {}
 
     private static Language language;
     private static Logger logger;
 
-    private static Map<String, String> environment = new HashMap<>();
+    private static HashMap<String, String> environment = new HashMap<>();
 
     public static boolean setLanguage(@NotNull String languageCode) {
         try {
@@ -40,7 +40,7 @@ public class Messages {
     }
 
     public static void setLogger(@NotNull Logger logger) {
-        Messages.logger = logger;
+        Formatter.logger = logger;
     }
 
     public static void setException(@NotNull Exception exception) {
@@ -61,10 +61,6 @@ public class Messages {
         setVariable(variableName, value);
     }
 
-    public static boolean containsVariable(@NotNull String variableName) {
-        return environment.containsKey(variableName);
-    }
-
     @Nullable
     public static String getVariable(@NotNull String key) {
         return environment.getOrDefault(key, null);
@@ -74,8 +70,11 @@ public class Messages {
         environment.clear();
     }
 
-    @NotNull
     public static String replaceVariableString(@NotNull String string) {
+        return replaceVariableString(null, string);
+    }
+    @NotNull
+    public static String replaceVariableString(Player player, @NotNull String string) {
         if (!string.contains("{")) {
             return string;
         }
@@ -89,9 +88,15 @@ public class Messages {
             if (lparen != -1 &&
                     rparen != -1 &&
                     rparen > lparen + 1) {
-                String variableValue = getVariable(stringBuilder.substring(lparen + 1, rparen));
+                String variableName = stringBuilder.substring(lparen + 1, rparen);
+                String variableValue = Environment.getVariable(player, variableName);
                 if (Objects.nonNull(variableValue)) {
-                    stringBuilder.replace(lparen, rparen + 1, variableValue);
+                    if (variableName.contains("exception")) {
+                        stringBuilder.replace(lparen, rparen + 1, red(variableValue));
+                    }
+                    else {
+                        stringBuilder.replace(lparen, rparen + 1, variableValue);
+                    }
                 }
             }
             else {
@@ -132,10 +137,6 @@ public class Messages {
         sendMessageString(sender, replaceVariableLanguage(messageName));
     }
 
-    public static void sendMessageAndLog(@NotNull CommandSender sender, String messageName) {
-        sendMessageStringAndLog(sender, replaceVariableLanguage(messageName));
-    }
-
     public static void infoString(@NotNull String string) {
         logger.info(replaceVariableString(string));
     }
@@ -161,10 +162,47 @@ public class Messages {
     }
 
     public static void debugString(@NotNull CommandSender sender, @NotNull String string) {
-        sender.sendMessage(language.debugHead + replaceVariableString(string));
+        sender.sendMessage(language.debugHead + string);
     }
 
-    public static void debugLang(@NotNull CommandSender sender, @NotNull String messageName) {
-        sender.sendMessage(language.debugHead + replaceVariableLanguage(messageName));
+    public static void hello() {
+        infoString(yellow("Nice to meet you! o(*￣▽￣*)ブ"));
+        infoString(purple("CustomCommands is written by Chuanwise, open source under GPL GNU license"));
+        Formatter.infoString(white("You can support us in following websites:"));
+        Formatter.infoString(yellow("Github: ") + Plugin.GITHUB + gray("(Remember to give me a star :>)"));
+        Formatter.infoString(yellow("MCBBS: ") + Plugin.MCBBS);
+        Formatter.infoString("Join the QQ group: " + red(Plugin.QQ_GROUP) + " to get the newest update and some tech-suppositions.");
+    }
+
+    public static String white(String string) {
+        return "\033[30;33m" + string + "\33[0m";
+    }
+
+    public static String red(String string) {
+        return "\033[31;33m" + string + "\33[0m";
+    }
+
+    public static String green(String string) {
+        return "\033[32;33m" + string + "\33[0m";
+    }
+
+    public static String yellow(String string) {
+        return "\033[33;33m" + string + "\33[0m";
+    }
+
+    public static String blue(String string) {
+        return "\033[34;33m" + string + "\33[0m";
+    }
+
+    public static String purple(String string) {
+        return "\033[35;33m" + string + "\33[0m";
+    }
+
+    public static String cyan(String string) {
+        return "\033[36;33m" + string + "\33[0m";
+    }
+
+    public static String gray(String string) {
+        return "\033[36;33m" + string + "\33[0m";
     }
 }

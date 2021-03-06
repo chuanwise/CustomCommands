@@ -1,11 +1,12 @@
 package io.github.taixue.plugin.customcommands.customcommand;
 
 import io.github.taixue.plugin.customcommands.Plugin;
-import io.github.taixue.plugin.customcommands.language.Messages;
+import io.github.taixue.plugin.customcommands.language.Formatter;
 import io.github.taixue.plugin.customcommands.util.Strings;
 import org.bukkit.command.CommandSender;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.PatternSyntaxException;
 
 public class Command {
@@ -31,7 +32,9 @@ public class Command {
         CONSOLE,
         AUTO,
         BYPASS,
+        PLAYER
     }
+    private String identifyPlayer;
 
     private Identify identify = Identify.AUTO;
 
@@ -50,16 +53,16 @@ public class Command {
      * @return          true only if it's correct arguments.
      */
     public boolean parseCommand(CommandSender sender, String[] arguments) {
-        Messages.clearVariables();
-        Messages.setVariable("command", name);
-        Messages.setVariable("permission", "ccs.run." + group.getName() +"." + name);
+        Formatter.clearVariables();
+        Formatter.setVariable("command", name);
+        Formatter.setVariable("permission", "ccs.run." + group.getName() +"." + name);
 
         int paraIndex = 0, argsIndex = 1;
         while (paraIndex < parameters.length && argsIndex < arguments.length) {
             String para = parameters[paraIndex ++];
             String arg = arguments[argsIndex ++];
 
-            Messages.setVariable("parameter", para);
+            Formatter.setVariable("parameter", para);
 
             if (para.startsWith("{")) {
                 String parameterName = para.substring(1, para.length() - 1);
@@ -73,7 +76,7 @@ public class Command {
         if (paraIndex < parameters.length) {
             // 形参多余：若多余的是 remain 则将其设置为空，否则语法错误
             if (paraIndex == parameters.length - 1 && parameters[paraIndex].equals("{remain}")) {
-                Messages.setVariable("parameter", "remain");
+                Formatter.setVariable("parameter", "remain");
                 variableValues.put("remain", "");
                 return true;
             }
@@ -101,15 +104,11 @@ public class Command {
         return true;
     }
 
-    /**
-     * 将 actions 内的变量名替换为值，后返回结果
-     * @return
-     */
     public ArrayList<String> getParsedActions() {
         ArrayList<String> actionStrings = new ArrayList<>();
 
         for (String cmd: actions) {
-            actionStrings.add(Messages.replaceVariableString(replaceVariables(cmd)));
+            actionStrings.add(Formatter.replaceVariableString(replaceVariables(cmd)));
         }
         return actionStrings;
     }
@@ -135,18 +134,18 @@ public class Command {
             }
             if (parameter.charAt(0) == '{') {
                 String parameterName = parameter.substring(1, parameter.length() - 1);
-                Messages.setVariable("parameter", parameterName);
+                Formatter.setVariable("parameter", parameterName);
 
                 if (matches.containsKey(parameterName)) {
                     try {
                         String regex = matches.get(parameterName);
-                        Messages.setVariable("regex", regex);
+                        Formatter.setVariable("regex", regex);
                         if (!argument.matches(regex)) {
                             return false;
                         }
                     } catch (PatternSyntaxException exception) {
-                        Messages.setException(exception);
-                        Messages.severeLanguage("exceptionInMatchingArgument");
+                        Formatter.setException(exception);
+                        Formatter.severeLanguage("exceptionInMatchingArgument");
                         exception.printStackTrace();
                         return false;
                     }
@@ -171,7 +170,7 @@ public class Command {
                 // 检查变量名合法性
                 if (parameter.matches("\\{" + Strings.LEGAL_VARIABLE_NAME_REGEX + "\\}")) {
                     String parameterName = parameter.substring(1, parameter.length() - 1);
-                    Messages.setVariable("parameter", parameterName);
+                    Formatter.setVariable("parameter", parameterName);
                     // 变量重定义，或不在末尾使用 remain
                     if (variableNames.contains(parameterName) ||
                             (index != parameters.length - 1 && parameterName.equals("remain"))) {
@@ -197,7 +196,7 @@ public class Command {
             }
         }
         for (String regexHead: matches.keySet()) {
-            Messages.setVariable("parameter", regexHead);
+            Formatter.setVariable("parameter", regexHead);
             if (regexHead.equalsIgnoreCase("remain")) {
                 return false;
             }
@@ -208,8 +207,8 @@ public class Command {
                 "".matches(matches.get(regexHead));
             }
             catch (PatternSyntaxException exception) {
-                Messages.setException(exception);
-                Messages.severeLanguage("regexSyntaxError");
+                Formatter.setException(exception);
+                Formatter.severeLanguage("regexSyntaxError");
                 return false;
             }
         }
@@ -223,12 +222,20 @@ public class Command {
      */
     public String replaceVariables(String string) {
         final int maxInteractions = ((Integer) Plugin.pluginConfig.get("max-iterations"));
+        int left, right;
+
         for (int counter = 0;
              string.contains("{") && counter < maxInteractions;
              counter++) {
+            left = string.indexOf("{");
+            right = string.indexOf("}", left);
 
-            for (String para: variableValues.keySet()) {
-                string = string.replaceAll("\\{" + para + "\\}", variableValues.get(para));
+            if (left < right - 1) {
+                String variableName = string.substring(left + 1, right);
+                String value = variableValues.get(variableName);
+                if (Objects.nonNull(value)) {
+                    string = string.replaceAll("\\{" + Matcher.quoteReplacement(variableName) + "\\}", value);
+                }
             }
         }
         return string;
@@ -284,7 +291,16 @@ public class Command {
     }
 
     public String getIdentifyString() {
-        return identify.toString().toLowerCase();
+        if (identify == Identify.PLAYER) {
+            return "player:" + getIdentifyPlayer();
+        }
+        else {
+            return identify.toString().toLowerCase();
+        }
+    }
+
+    public String getIdentifyPlayer() {
+        return identifyPlayer;
     }
 
     public void setResultString(String resultString) {
@@ -373,5 +389,10 @@ public class Command {
 
     public void setUsageToDefault() {
         setUsageString("/ccsr " + getGroup().getName() + " " + getFormat());
+    }
+
+    public void setIdentifyPlayer(String identifyPlayer) {
+        this.identifyPlayer = identifyPlayer;
+        identify = Identify.PLAYER;
     }
 }

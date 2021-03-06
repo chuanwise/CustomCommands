@@ -1,7 +1,7 @@
 name: Custom-Commands
 main: io.github.taixue.plugin.customcommands.CustomCommandPlugin
 author: Chuanwise
-version: 3.0
+version: 4.0
 website: https://github.com/Chuanwise/CustomCommands/
 
 # softdepend: [PlaceholderAPI]
@@ -15,7 +15,7 @@ commands:
       /ccs reload                         reload all configurations
       /ccs version                        show version and some other information
       /ccs debug                          enable or disable debug mode
-      /ccs <config | run> <remain-part>   sames with /ccs<r|c> <remain-part>
+      /ccs <config | run | env> <remain-part>   sames with /ccs<r|c|e> <remain-part>
   customcommandsconfig:
     description: Generic Custom-commands command for configuring
     aliases: [ccsc, ccsconfig]
@@ -28,6 +28,15 @@ commands:
     usage: |
       Usage:
       /ccsr <command-name> [arguments-list]
+  customcommandsenvironment:
+    description: Set, edit or remove a variable
+    aliases: [ccse, ccsenv]
+    usage: |
+      Usage:
+      /ccse <global | personal> set <variable-name> <set-to>
+      /ccse <global | personal> remove <variable-name>
+      /ccse <global | personal> clear
+      /ccse reload
 
 permissions:
   ccs.*:
@@ -50,4 +59,10 @@ permissions:
   ccs.config.val.look:
     default: op
     description: look value of variable in config.yml
+  ccs.env.global:
+    default: op
+  ccs.env.personal:
+    default: true
+  ccs.env.reload:
+    default: op
 

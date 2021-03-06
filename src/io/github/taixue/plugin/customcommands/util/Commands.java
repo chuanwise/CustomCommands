@@ -3,7 +3,7 @@ package io.github.taixue.plugin.customcommands.util;
 import com.sun.istack.internal.NotNull;
 import io.github.taixue.plugin.customcommands.customcommand.Command;
 import io.github.taixue.plugin.customcommands.customcommand.Group;
-import io.github.taixue.plugin.customcommands.language.Messages;
+import io.github.taixue.plugin.customcommands.language.Formatter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.MemorySection;
 
@@ -20,10 +20,11 @@ public class Commands {
         Command result = new Command();
         result.setName(memorySection.getName());
 
-        Messages.setVariable("command", result.getName());
+        Formatter.setVariable("command", result.getName());
+        result.setGroup(addTo);
 
         result.setFormat(((String) memorySection.get("format")));
-        Messages.setVariable("format", result.getFormat());
+        Formatter.setVariable("format", result.getFormat());
 
         result.setActions(((List<String>) memorySection.get("actions")).toArray(new String[0]));
 
@@ -33,23 +34,34 @@ public class Commands {
         else {
             result.setUsageString("/ccsr " + addTo.getName() + " " + result.getFormat());
         }
-        Messages.setVariable("usage", result.getUsageString());
+        Formatter.setVariable("usage", result.getUsageString());
 
         if (memorySection.contains("identify")) {
-            result.setIdentify(Command.Identify.valueOf(((String) memorySection.get("identify")).toUpperCase()));
+            String identifyString = ((String) memorySection.get("identify"));
+            Formatter.setVariable("identify", identifyString);
+
+            if (identifyString.contains(":")) {
+                if (identifyString.startsWith("player")) {
+                    result.setIdentifyPlayer(identifyString.substring(identifyString.indexOf(":") + 1).trim());
+                }
+            }
+            else {
+                result.setIdentify(Command.Identify.valueOf(identifyString.toUpperCase()));
+            }
         }
         else {
+            Formatter.setVariable("identify", "auto");
             result.setIdentify(Command.Identify.AUTO);
         }
-        Messages.setVariable("identify", result.getIdentify().toString().toLowerCase());
+
 
         if (memorySection.contains("result")) {
             result.setResultString(((String) memorySection.get("result")));
         }
         else {
-            result.setResultString(Messages.replaceVariableLanguage("defaultResultString"));
+            result.setResultString(Formatter.replaceVariableLanguage("defaultResultString"));
         }
-        Messages.setVariable("result", result.getResultString());
+        Formatter.setVariable("result", result.getResultString());
 
         if (memorySection.contains("permissions")) {
             result.setPermissions(((List<String>) memorySection.get("permissions")).toArray(new String[0]));
@@ -108,7 +120,7 @@ public class Commands {
                 return false;
             }
             if (memorySection.contains("identify") && !(memorySection.get("identify") instanceof String &&
-                    ((String) memorySection.get("identify")).matches("console|auto"))) {
+                    ((String) memorySection.get("identify")).matches("console|auto|bypass|player:\\w+"))) {
                 return false;
             }
             if (memorySection.contains("usage") && !(memorySection.get("usage") instanceof String)) {
@@ -130,13 +142,13 @@ public class Commands {
     @NotNull
     public static Command getDefaultCommand(@NotNull Group group, String name) {
         Command command = new Command(name);
-        Messages.setVariable("group", group.getName());
-        Messages.setVariable("command", command.getName());
+        Formatter.setVariable("group", group.getName());
+        Formatter.setVariable("command", command.getName());
         command.setFormat("{remain}");
         command.setActions(new String[0]);
         command.setUsageString("/ccsr " + group.getName() + " " + command.getFormat());
         command.setIdentify(Command.Identify.AUTO);
-        command.setResultString(Messages.replaceVariableLanguage("defaultResultString"));
+        command.setResultString(Formatter.replaceVariableLanguage("defaultResultString"));
         command.setPermissions(new String[]{"ccs.run." + group.getName() + "." + command.getName()});
         return command;
     }

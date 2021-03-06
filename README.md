@@ -4,13 +4,15 @@ CustomCommands 插件也叫 CCS（CustomCommandS）或 Custom-Commands 等，允
 * 插件 QQ 群：`1028582500`
 * 作者：椽子。
 * 明城京联合太学，保留所有权利。
-* 欢迎<b>在显眼处注明出处</b>的情况下非商用转载。
+* 请遵循 `GNU` 开源协议使用 `CCS`。
 
 ## 目录
 * [基本概念](#基本概念)
-  * [指令组](##指令组)
-  * [指令分支](##指令分支)
-  * [指令查找](##指令查找)
+  * [指令组](#指令组)
+  * [指令分支](#指令分支)
+  * [指令查找](#指令查找)
+  * [指令分析](#指令查找)
+  * [变量表](#变量表)
 * [演示效果](#演示效果)
   * [设计目标](#设计目标)
   * [实际效果](#实际效果)
@@ -33,6 +35,8 @@ CustomCommands 插件也叫 CCS（CustomCommandS）或 Custom-Commands 等，允
   * [可能要增加的功能](#可能要增加的功能)
 * [联系方式](#联系方式)
 * [更新日志](#更新日志)
+  * [4.0](#4.0)
+  * [3.0](#3.0)
   * [2.0](#2.0)
   * [1.0](#1.0)
 * [感谢](#感谢)
@@ -57,6 +61,32 @@ CustomCommands 插件也叫 CCS（CustomCommandS）或 Custom-Commands 等，允
 
 ### 指令查找
 执行使用 `CCS` 设计的指令的语句一般是：`/ccsr <group-name> <arguments>`。CCS 首先查找名为 `<group-name>` 的指令组，在该指令组下的所有分支中寻找能与当前参数匹配的一种分支。若能确定唯一的匹配当前参数的分支，则执行该指令。
+
+### 变量表
+变量表是记录每一个变量和其值的哈希表。每一个玩家都有一个私人变量表，全服还有一个公共变量表，都存在 `plugins/Custom-Commands/environment` 中。
+
+变量表机制允许你在 `actions` 中引用一些自定义的变量，以更大程度地简化指令输入。你可以参照下文[指令分析](#指令分析)中的示例 `actions`。
+
+自定义变量表的指令，见于 [插件指令](#插件指令)
+
+### 指令分析
+当找到唯一匹配的指令分支时，`CCS` 会按照下面的步骤分析：
+1. 首先记录 `format` 中每一个变量的值。
+1. 对于 `actions` 中每一条指令中的变量，都将遵循下面的优先顺序查找其值：
+    1. 如果 `format` 中定义，则使用 `format` 对应参数的值。
+    1. 如果该玩家的私人变量表中有该值，则使用其值。
+    1. 如果全服公共变量表中有该值，则使用其值。
+    1. 如果预定义变量中有该值，则使用其值。
+1. `CCS` 将分别对每一个 `actions` 进行分析和执行，所以 actions 中的语句可以产生前后影响。例如：
+    ````yaml
+    actions:
+    - 'ccse global prefix pex group {group_name}'
+    - '{prefix} add <a-permission-node>'
+    - '{prefix} remove <a-permission-node>'
+    # - '{prefix} (other command start with pex group {group_name})'
+    # ...
+    ````
+    我们鼓励你利用该特性更大程度地减少重复性代码的书写。
 
 ## 演示效果
 ### 设计目标
@@ -200,9 +230,19 @@ commands:
 |`/ccsc val <variable-name>`|查找 `config.yml` 中的设置项 `<variable-name>`，并显示其值
 |`/ccsc val <variable-name> <set-to>`|设置 `config.yml` 中的设置项 `<variable-name>` 的值为 `<set-to>`
 |`/ccsr <command-name> [arguments-list]`|执行在 `commands.yml` 内定义的指令 `<command-name> `
+|`/ccse global`|查看全服变量表中的变量
+|`/ccse personal`|查看私人变量表中的变量
+|`/ccse reload`|重新载入所有在线玩家的变量表
+|`/ccse <global \| personal> set <variable-name> <value>`|设置变量表中的变量`<variable-name>`为<`value>`
+|`/ccse <global \| personal> remove <variable-name>`|删除变量表中的变量`<variable-name>`
+|`/ccse <global \| personal> clear`|删除变量表中所有的变量>`
+
 
 ### 注意
-1. 若修改指令组名 / 分支名 / 分支的 format，将会自动修改该组所有分支 / 该分支下的所有 `usage`。
+1. 若修改`指令组名 / 分支名 / 分支的 format`，将会自动修改该组所有分支 / 该分支下的所有 `usage`。
+1. 上表 `<>` 包围的参数为必填参数，`[]` 包围的为选填参数，实际使用指令并不需要添加该括号。例如：
+实际使用`/ccse <global \| personal> remove <variable-name>`时，你可以输入`/ccse global remove server_name taixue server`。
+1. 上表中一个参数内若出现 `|`，表示该处有多种写法。例如`<global \| personal>`表示此处必须写 `global` 或 `personal` 中的一个
 
 ## 配置文件
 ### config.yml
@@ -278,11 +318,30 @@ format 中还可以存在普通字符串，以便于区分指令分支。
 
 ### actions（执行指令）
 在输入了正确的 `/ccsr` 指令后将会执行的命令<br>
-如果这当中出现了没有在 `format` 中定义的变量，它们会保持原样。
+如果这当中出现了无法找到的变量，它们会保持原样。有关变量的查找方式，请查阅[指令分析](#指令分析)
 
-<b>警告</b>：
+#### 预定义变量表
+我们为你设定了一些无法通过 format 读取的预定义变量，如下表所示
+|变量名|值
+|---|---
+|`{player}`|玩家名。如果是控制台身份，则为 `CONSOLE`
+|`{displayName}`|玩家显示出的名字，包含前后缀等信息
+|`{world}`|玩家所在世界名。控制台身份无此变量
+|`{group}`|当前指令分支所处的组。控制台身份无此变量
+|`{UUID}`|玩家的 UUID。控制台身份无此变量
 
- CCS 允许你在 actions 中写入 `/ccsr` 指令，这可能会导致循环。例如下面的情况：
+#### 脚本
+你可以在 actions 中使用一些特殊字符串，格式如下表所示：
+|脚本名|格式|参数解释|作用
+|---|---|---|---
+|`@sleep`|`@sleep <时长>`|停顿秒数，单位<b>毫秒</b>|在此处停顿若干毫秒后继续执行后面的 `actions` 语句。
+|`@message`|`@message <信息>`|一段信息，可以包含空格|将这段信息发送给指令发送者。
+|`@title`|`@title <主标题> [副标题]`|一个主标题和副标题|为玩家显示一个标题。副标题可以包含空格。
+
+#### 注意
+
+1. 自循环
+`CCS` 允许你在 actions 中写入 `/ccsr` 指令，这可能会导致循环。例如下面的情况：
 
 ```yaml
 commands:
@@ -296,9 +355,12 @@ commands:
 ```
 这会导致服务器后台输出大量错误信息随后崩服。<br>
 为了保护你的服务器，在设计 actions 时，<b>必须</b> 在添加额外的 `/ccsr` 时仔细考虑。
+1. `@sleep 时长`：请确保停顿时长小于 `spigot.yml` 中的 `settings.timeout-time`，否则服务器会被判定为卡死，随后崩服。
+例如，当 `settings.timeout-time` 为 `60` 时，意味着服务器无响应 `60` 秒会被判定为卡死。为确保不会崩服，`@sleep` 的参数应该小于 `50000`。
+1. `@title` 无法被应用在控制台上。
 
 ### usage（选填）
-默认值：`/ccsr <指令组名> <分支名> <解析规则>`。
+默认值：`/ccsr <指令组名> <解析规则>`。
 
 在上面的 `pex-group-set` 命令中，`usage` 的值是 `/ccsr pex-group-set {user_name} {group_name}`
 
@@ -306,8 +368,15 @@ commands:
 
 ### identify（选填）
 默认值： `auto`。<br>
-执行 `actions` 时的身份，可以是 `auto` 也可以是 `console`。`auto` 就是以当前输入 `/ccsr` 指令的身份执行 `actions`，`console` 就是以控制台身份执行 `actions`。<p>
-这个设置项允许你仅使用 `console` 时可以通过权限 `ccs.run.<指令名>` 跳过这一串指令的权限检测。当然，在未来这个插件还可能支持 `bypass` 模式（以玩家身份无视权限执行）。
+执行 `actions` 时的身份，可以是 `auto`、`bypass` 也可以是 `console`。
+|identify|效果
+|---|---
+|`auto`|以当前输入 `/ccsr` 指令的身份执行 `actions`
+|`console`|以控制台身份执行 `actions`
+|`bypass`|玩家身份跳过权限检测执行 `actions`
+
+#### 注意
+1. `console` 身份执行时，若 `actions` 中出现变量，仍然以指令发送者的身份查找。
 
 ### permissions（选填）
 默认值： `[ccs.run.<group-name>.<branch-name>]`。
@@ -320,6 +389,15 @@ commands:
 默认值：`成功执行 <group-name> 组中的 <branch-name> 指令`。
 
 指令匹配成功并执行结束后，发送给指令发送者的信息。
+
+## 数据文件
+### environment 文件夹
+`environment` 是各玩家的私人变量表和全服的自定公共变量表。
+
+* `global.yml`: 全服公共变量表
+* `<UUID>.yml`: 玩家私人变量表
+
+你可以查阅[这里](#变量表)了解更多信息。
 
 ## 配置文件示例
 ### config.yml
@@ -392,6 +470,9 @@ commands:
 |`ccs.config.group`|配置一个指令组的设置
 |`ccs.run.<指令组名>.<指令分支名>`|使用指令组 `指令组名` 中的 `指令分支名` 分支。
 |`ccs.config.val`|查看和设置一个项目
+|`ccs.env.reload`|重载所有在线玩家的变量表
+|`ccs.env.global`|编辑全局变量表
+|`ccs.env.personal`|编辑玩家私人变量表
 
 ### 注意
 1. `ccs.run.<指令组名>.<指令分支名>` 是默认的执行某一分支的权限。若修改该分支的 `permissions`，将以具体的 `permissions` 为准。
@@ -412,12 +493,21 @@ commands:
 
 ## 联系方式
 * QQ group（QQ 群）:  `1028582500`
-* Author（作者）: Chuanwise
-* E-mail（邮箱）: chuanwise@qq.com
+* Author（作者）: `Chuanwise`
+* E-mail（邮箱）: `chuanwise@qq.com`
 * 明城京联合太学，保留所有权利。
 * Taixue, All rights reserved.
 
 ## 更新日志
+### 4.0
+发布于 `2021年3月6日`
+1. 进一步完善了消息提示系统和 `zhcn.json` 汉化提示包。
+1. 新增变量表机制，让使用者可以更方便地简化输入指令。
+1. 修改了指令执行机制，使得 `actions` 靠前的语句可以对靠后的语句产生影响。
+1. 增加了对默认变量的说明。
+1. 增加了 `actions` 中的脚本。
+1. 增加了 `bypass` 的 `identify`。
+
 ### 3.0
 发布于 `2021年2月25日`
 1. 进一步完善了消息提示系统和 `zhcn.json` 汉化提示包。
@@ -439,7 +529,7 @@ commands:
 * [MCBBS](https://www.mcbbs.net/thread-1172706-1-1.html)
 
 ## 感谢
-* `Favourite`：引导我入门了最基础的 `Minecraft` 服务器技术。
+* `Favouritesc`：引导我入门了最基础的 `Minecraft` 服务器技术。
 * `Eric`：[@ExerciseBook](https://github.com/ExerciseBook)
 * `One47`
 * `Coloryr`

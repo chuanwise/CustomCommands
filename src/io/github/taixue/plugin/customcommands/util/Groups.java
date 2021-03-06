@@ -3,7 +3,7 @@ package io.github.taixue.plugin.customcommands.util;
 import com.sun.istack.internal.NotNull;
 import io.github.taixue.plugin.customcommands.customcommand.Command;
 import io.github.taixue.plugin.customcommands.customcommand.Group;
-import io.github.taixue.plugin.customcommands.language.Messages;
+import io.github.taixue.plugin.customcommands.language.Formatter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.MemorySection;
 
@@ -19,17 +19,17 @@ public class Groups {
         Group result = new Group();
         result.setName(memorySection.getName());
 
-        Messages.setVariable("group", result.getName());
+        Formatter.setVariable("group", result.getName());
 
         Map<String, Object> commandMap = memorySection.getValues(false);
         Set<String> loadedCommands = new HashSet<>();
         for (String commandName: commandMap.keySet()) {
-            Messages.setVariable("command", commandName);
+            Formatter.setVariable("command", commandName);
             try {
                 MemorySection subMemorySection = ((MemorySection) commandMap.get(commandName));
 
                 if (loadedCommands.contains(commandName)) {
-                    Messages.severeLanguage("redefinedCommands");
+                    Formatter.severeLanguage("redefinedCommands");
                 }
                 else {
                     if (Commands.isLegalCommandMemorySection(subMemorySection)) {
@@ -40,19 +40,19 @@ public class Groups {
                                 result.addCommand(command);
                             }
                             else {
-                                Messages.severeLanguage("matchesError");
+                                Formatter.severeLanguage("matchesError");
                             }
                         } else {
-                            Messages.severeLanguage("illegalParameterName");
+                            Formatter.severeLanguage("illegalParameterName");
                         }
                     } else {
-                        Messages.severeLanguage("wrongFormatForCommand");
+                        Formatter.severeLanguage("wrongFormatForCommand");
                     }
                 }
             }
             catch (Exception exception) {
-                Messages.setException(exception);
-                Messages.severeLanguage("exceptionInLoadingCommand");
+                Formatter.setException(exception);
+                Formatter.severeLanguage("exceptionInLoadingCommand");
                 exception.printStackTrace();
             }
         }
@@ -65,7 +65,7 @@ public class Groups {
 
     public static boolean hasPermission(@NotNull CommandSender commandSender, @NotNull String groupName) {
         String permissionNode = "ccs.run." + groupName;
-        Messages.setVariable("permission", permissionNode);
+        Formatter.setVariable("permission", permissionNode);
         return commandSender.hasPermission(permissionNode);
     }
 }

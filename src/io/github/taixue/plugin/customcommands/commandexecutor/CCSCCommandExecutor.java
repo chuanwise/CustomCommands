@@ -2,7 +2,7 @@ package io.github.taixue.plugin.customcommands.commandexecutor;
 
 import io.github.taixue.plugin.customcommands.Plugin;
 import io.github.taixue.plugin.customcommands.customcommand.Group;
-import io.github.taixue.plugin.customcommands.language.Messages;
+import io.github.taixue.plugin.customcommands.language.Formatter;
 import io.github.taixue.plugin.customcommands.util.Commands;
 import io.github.taixue.plugin.customcommands.util.Strings;
 import org.bukkit.command.Command;
@@ -18,7 +18,7 @@ public class CCSCCommandExecutor implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         // ccs.config.val
         // ccs.config.val
-        Messages.clearVariables();
+        Formatter.clearVariables();
         String permissionNode;
         if (strings.length == 0) {
             return false;
@@ -26,36 +26,37 @@ public class CCSCCommandExecutor implements CommandExecutor {
 
         if (strings[0].equalsIgnoreCase("val")) {
             permissionNode = "ccs.config.val";
-            Messages.setVariable("permission", permissionNode);
+            Formatter.setVariable("permission", permissionNode);
             if (commandSender.hasPermission(permissionNode)) {
                 return val(commandSender, command, s, strings);
             }
             else {
-                Messages.sendMessage(commandSender, "lackPermission");
+                Formatter.sendMessage(commandSender, "lackPermission");
                 return true;
             }
         }
 
         if (strings[0].equalsIgnoreCase("list")) {
             permissionNode = "ccs.config.list";
-            Messages.setVariable("permission", permissionNode);
+            Formatter.setVariable("permission", permissionNode);
             if (commandSender.hasPermission(permissionNode)) {
                 return list(commandSender, command, s, strings);
             }
             else {
-                Messages.sendMessage(commandSender, "lackPermission");
+                Formatter.sendMessage(commandSender, "lackPermission");
                 return true;
             }
         }
 
         if (strings[0].equalsIgnoreCase("save") && strings.length == 1) {
             saveCommands(commandSender);
+            Formatter.sendMessage(commandSender, "commandsSaved");
             return true;
         }
 
         if (strings[0].equalsIgnoreCase("add")) {
             permissionNode = "ccs.config.add";
-            Messages.setVariable("permission", permissionNode);
+            Formatter.setVariable("permission", permissionNode);
             if (commandSender.hasPermission(permissionNode)) {
                 boolean result = add(commandSender, command, s, strings);
                 if (result && Plugin.autoSave) {
@@ -64,14 +65,14 @@ public class CCSCCommandExecutor implements CommandExecutor {
                 return result;
             }
             else {
-                Messages.sendMessage(commandSender, "lackPermission");
+                Formatter.sendMessage(commandSender, "lackPermission");
                 return true;
             }
         }
 
         if (strings[0].equalsIgnoreCase("group")) {
             permissionNode = "ccs.config.group";
-            Messages.setVariable("permission", permissionNode);
+            Formatter.setVariable("permission", permissionNode);
             if (commandSender.hasPermission(permissionNode)) {
                 boolean result = group(commandSender, command, s, strings);
                 if (result && Plugin.autoSave) {
@@ -81,14 +82,14 @@ public class CCSCCommandExecutor implements CommandExecutor {
 
             }
             else {
-                Messages.sendMessage(commandSender, "lackPermission");
+                Formatter.sendMessage(commandSender, "lackPermission");
                 return true;
             }
         }
 
         if (strings[0].equalsIgnoreCase("remove")) {
             permissionNode = "ccs.config.remove";
-            Messages.setVariable("permission", permissionNode);
+            Formatter.setVariable("permission", permissionNode);
             if (commandSender.hasPermission(permissionNode)) {
                 boolean result = remove(commandSender, command, s, strings);
                 if (result && Plugin.autoSave) {
@@ -98,7 +99,7 @@ public class CCSCCommandExecutor implements CommandExecutor {
 
             }
             else {
-                Messages.sendMessage(commandSender, "lackPermission");
+                Formatter.sendMessage(commandSender, "lackPermission");
                 return true;
             }
         }
@@ -109,14 +110,14 @@ public class CCSCCommandExecutor implements CommandExecutor {
     private boolean list(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length == 1) {
             if (Plugin.commandsConfig.getGroups().isEmpty()) {
-                Messages.sendMessage(commandSender, "noAnyLoadedGroup");
+                Formatter.sendMessage(commandSender, "noAnyLoadedGroup");
             }
             else {
-                Messages.sendMessage(commandSender, "loadedGroups");
+                Formatter.sendMessage(commandSender, "loadedGroups");
                 for (Group group: Plugin.commandsConfig.getGroups()) {
-                    Messages.setVariable("group", group.getName());
-                    Messages.setVariable("size", group.getCommands().size());
-                    Messages.sendMessage(commandSender, "groupSummary");
+                    Formatter.setVariable("group", group.getName());
+                    Formatter.setVariable("size", group.getCommands().size());
+                    Formatter.sendMessage(commandSender, "groupSummary");
                 }
             }
             return true;
@@ -130,26 +131,26 @@ public class CCSCCommandExecutor implements CommandExecutor {
         String valName = strings[1];
         switch (strings.length) {
             case 2:
-                Messages.setVariable("permission", "ccs.config.val.look");
+                Formatter.setVariable("permission", "ccs.config.val.look");
                 if (commandSender.hasPermission("ccs.config.val.look")) {
                     Object object = Plugin.pluginConfig.get("config." + valName, null);
                     if (Objects.isNull(object)) {
-                        Messages.sendMessage(commandSender, "wrongConfigItem");
+                        Formatter.sendMessage(commandSender, "wrongConfigItem");
                     } else {
-                        Messages.sendMessage(commandSender, valName + " : " + object);
+                        Formatter.sendMessage(commandSender, valName + " : " + object);
                     }
                 } else {
-                    Messages.sendMessage(commandSender, "lackPermission");
+                    Formatter.sendMessage(commandSender, "lackPermission");
                 }
                 return true;
             case 3:
-                Messages.setVariable("permission", "ccs.config.val.set");
+                Formatter.setVariable("permission", "ccs.config.val.set");
                 if (commandSender.hasPermission("ccs.config.val.set")) {
                     Plugin.pluginConfig.set("config." + valName, strings[2]);
                     Plugin.saveConfig();
-                    Messages.sendMessage(commandSender, valName + " set to " + strings[2] + " completely!");
+                    Formatter.sendMessage(commandSender, valName + " set to " + strings[2] + " completely!");
                 } else {
-                    Messages.sendMessage(commandSender, "lackPermission");
+                    Formatter.sendMessage(commandSender, "lackPermission");
                 }
                 return true;
             default:
@@ -160,18 +161,18 @@ public class CCSCCommandExecutor implements CommandExecutor {
     private boolean add(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length == 2) {
             String groupName = strings[1];
-            Messages.setVariable("group", groupName);
+            Formatter.setVariable("group", groupName);
             if (Strings.isLegalGroupName(groupName)) {
                 if (Objects.isNull(Plugin.commandsConfig.getGroup(groupName))) {
                     Group group = new Group(groupName);
                     Plugin.commandsConfig.addGroup(group);
-                    Messages.sendMessage(commandSender, "groupAdded");
+                    Formatter.sendMessage(commandSender, "groupAdded");
                 } else {
-                    Messages.sendMessage(commandSender, "groupAlreadyExist");
+                    Formatter.sendMessage(commandSender, "groupAlreadyExist");
                 }
             }
             else {
-                Messages.sendMessage(commandSender, "illegalGroupName");
+                Formatter.sendMessage(commandSender, "illegalGroupName");
             }
             return true;
         }
@@ -181,13 +182,13 @@ public class CCSCCommandExecutor implements CommandExecutor {
     private boolean remove(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length == 2) {
             String groupName = strings[1];
-            Messages.setVariable("group", groupName);
+            Formatter.setVariable("group", groupName);
             if (Objects.isNull(Plugin.commandsConfig.getGroup(groupName))) {
-                Messages.sendMessage(commandSender, "groupNotFound");
+                Formatter.sendMessage(commandSender, "groupNotFound");
             }
             else {
                 Plugin.commandsConfig.removeGroup(groupName);
-                Messages.sendMessage(commandSender, "groupRemoved");
+                Formatter.sendMessage(commandSender, "groupRemoved");
             }
             return true;
         }
@@ -200,9 +201,9 @@ public class CCSCCommandExecutor implements CommandExecutor {
         }
         String groupName = strings[1];
         Group group = Plugin.commandsConfig.getGroup(groupName);
-        Messages.setVariable("group", groupName);
+        Formatter.setVariable("group", groupName);
         if (Objects.isNull(group)) {
-            Messages.sendMessage(commandSender, "groupNotFound");
+            Formatter.sendMessage(commandSender, "groupNotFound");
             return true;
         }
 
@@ -217,7 +218,7 @@ public class CCSCCommandExecutor implements CommandExecutor {
 
         String firstOperator = strings[2];
         String commandName = strings[3];
-        Messages.setVariable("command", commandName);
+        Formatter.setVariable("command", commandName);
         io.github.taixue.plugin.customcommands.customcommand.Command currentCommand = group.getCommand(commandName);
 
         if (firstOperator.equalsIgnoreCase("add") && strings.length == 4) {
@@ -226,48 +227,48 @@ public class CCSCCommandExecutor implements CommandExecutor {
 
                     currentCommand = Commands.getDefaultCommand(group, commandName);
                     group.addCommand(currentCommand);
-                    Messages.sendMessage(commandSender, "commandAdded");
+                    Formatter.sendMessage(commandSender, "commandAdded");
                 } else {
-                    Messages.sendMessage(commandSender, "commandAlreadyExist");
+                    Formatter.sendMessage(commandSender, "commandAlreadyExist");
                 }
             } else {
-                Messages.sendMessage(commandSender, "illegalCommandName");
+                Formatter.sendMessage(commandSender, "illegalCommandName");
             }
             return true;
         }
 
         if (firstOperator.equalsIgnoreCase("remove") && strings.length == 4) {
             if (Objects.isNull(currentCommand)) {
-                Messages.sendMessage(commandSender, "commandNotFound");
+                Formatter.sendMessage(commandSender, "commandNotFound");
             }
             else {
                 group.removeCommand(commandName);
-                Messages.sendMessage(commandSender, "commandRemoved");
+                Formatter.sendMessage(commandSender, "commandRemoved");
             }
             return true;
         }
 
         if (firstOperator.equalsIgnoreCase("rename") && strings.length == 4) {
             groupName = strings[3];
-            Messages.setVariable("group", groupName);
+            Formatter.setVariable("group", groupName);
             if (Objects.isNull(Plugin.commandsConfig.getGroup(groupName))) {
                 if (Strings.isLegalGroupName(groupName)) {
                     group.setName(groupName);
-                    Messages.sendMessage(commandSender, "groupRenamed");
+                    Formatter.sendMessage(commandSender, "groupRenamed");
                 }
                 else {
-                    Messages.sendMessage(commandSender, "illegalGroupName");
+                    Formatter.sendMessage(commandSender, "illegalGroupName");
                 }
             }
             else {
-                Messages.setVariable("group", "groupAlreadyExist");
+                Formatter.setVariable("group", "groupAlreadyExist");
             }
             return true;
         }
 
         if (firstOperator.equalsIgnoreCase("command")) {
             if (Objects.isNull(currentCommand)) {
-                Messages.sendMessage(commandSender, "commandNotFound");
+                Formatter.sendMessage(commandSender, "commandNotFound");
                 return true;
             }
             if (strings.length == 4) {
@@ -278,18 +279,18 @@ public class CCSCCommandExecutor implements CommandExecutor {
             String secondOperator = strings[4];
             if (secondOperator.equalsIgnoreCase("rename") && strings.length == 6) {
                 commandName = strings[5];
-                Messages.setVariable("command", commandName);
+                Formatter.setVariable("command", commandName);
                 if (Objects.isNull(group.getCommand(commandName))) {
                     if (Strings.isLegalCommandName(commandName)) {
                         currentCommand.setName(commandName);
-                        Messages.sendMessage(commandSender, "commandRenamed");
+                        Formatter.sendMessage(commandSender, "commandRenamed");
                     }
                     else {
-                        Messages.sendMessage(commandSender, "illegalCommandName");
+                        Formatter.sendMessage(commandSender, "illegalCommandName");
                     }
                 }
                 else {
-                    Messages.sendMessage(commandSender, "commandAlreadyExist");
+                    Formatter.sendMessage(commandSender, "commandAlreadyExist");
                 }
                 return true;
             }
@@ -297,7 +298,7 @@ public class CCSCCommandExecutor implements CommandExecutor {
             if (secondOperator.equalsIgnoreCase("identify") && strings.length == 6) {
                 boolean set = false;
                 String identify = strings[5];
-                Messages.setVariable("identify", identify);
+                Formatter.setVariable("identify", identify);
 
                 if (identify.equalsIgnoreCase("auto")) {
                     currentCommand.setIdentify(io.github.taixue.plugin.customcommands.customcommand.Command.Identify.AUTO);
@@ -307,40 +308,44 @@ public class CCSCCommandExecutor implements CommandExecutor {
                     currentCommand.setIdentify(io.github.taixue.plugin.customcommands.customcommand.Command.Identify.CONSOLE);
                     set = true;
                 }
+                if (identify.equalsIgnoreCase("bypass")) {
+                    currentCommand.setIdentify(io.github.taixue.plugin.customcommands.customcommand.Command.Identify.BYPASS);
+                    set = true;
+                }
                 if (set) {
-                    Messages.sendMessage(commandSender, "identifySet");
+                    Formatter.sendMessage(commandSender, "identifySet");
                 }
                 else {
-                    Messages.sendMessage(commandSender, "illegalIdentify");
+                    Formatter.sendMessage(commandSender, "illegalIdentify");
                 }
                 return false;
             }
 
             if (secondOperator.equalsIgnoreCase("result")) {
-                String result = getRemainString(strings, 5);
-                Messages.setVariable("result", result);
+                String result = Strings.getRemainString(strings, 5);
+                Formatter.setVariable("result", result);
                 currentCommand.setResultString(result);
-                Messages.sendMessage(commandSender, "resultSet");
+                Formatter.sendMessage(commandSender, "resultSet");
             }
 
             if (secondOperator.equalsIgnoreCase("usage")) {
-                String usage = getRemainString(strings, 5);
-                Messages.setVariable("usage", usage);
+                String usage = Strings.getRemainString(strings, 5);
+                Formatter.setVariable("usage", usage);
                 currentCommand.setUsageString(usage);
-                Messages.sendMessage(commandSender, "usageSet");
+                Formatter.sendMessage(commandSender, "usageSet");
             }
 
             if (secondOperator.equalsIgnoreCase("format")) {
-                String format = getRemainString(strings, 5);
+                String format = Strings.getRemainString(strings, 5);
                 String elderFormat = currentCommand.getFormat();
 
-                Messages.setVariable("format", format);
+                Formatter.setVariable("format", format);
                 currentCommand.setFormat(format);
                 if (currentCommand.isLegalParameters()) {
-                    Messages.sendMessage(commandSender, "formatSet");
+                    Formatter.sendMessage(commandSender, "formatSet");
                 }
                 else {
-                    Messages.sendMessage(commandSender, "illegalFormat");
+                    Formatter.sendMessage(commandSender, "illegalFormat");
                     currentCommand.setFormat(elderFormat);
                 }
                 return true;
@@ -351,49 +356,49 @@ public class CCSCCommandExecutor implements CommandExecutor {
                 String action;
 
                 if (lastOperator.equalsIgnoreCase("edit") && strings.length >= 7) {
-                    int index = getIndex(commandSender, strings[6], currentCommand.getActions().length);
+                    int index = Strings.getIndex(commandSender, strings[6], currentCommand.getActions().length);
                     if (index == -1) {
-                        return false;
+                        return true;
                     }
                     index--;
+                    action = Strings.getRemainString(strings, 7);
 
-                    action = getRemainString(strings, 7);
-                    Messages.setVariable("action", action);
+                    Formatter.setVariable("action", action);
 
                     currentCommand.getActions()[index] = action;
-                    Messages.sendMessage(commandSender, "actionEdited");
+                    Formatter.sendMessage(commandSender, "actionEdited");
                     return true;
                 }
 
                 if (lastOperator.equalsIgnoreCase("clear") && strings.length == 6) {
                     currentCommand.setActions(new String[0]);
-                    Messages.sendMessage(commandSender, "actionsCleared");
+                    Formatter.sendMessage(commandSender, "actionsCleared");
                     return true;
                 }
 
-                action = getRemainString(strings, 6);
-                Messages.setVariable("action", action);
+                action = Strings.getRemainString(strings, 6);
+                Formatter.setVariable("action", action);
 
                 if (lastOperator.equalsIgnoreCase("add")) {
                     currentCommand.addAction(action);
-                    Messages.sendMessage(commandSender, "actionAdded");
+                    Formatter.sendMessage(commandSender, "actionAdded");
                     return true;
                 }
 
                 if (lastOperator.equalsIgnoreCase("remove")) {
                     if (currentCommand.containsAction(action)) {
                         currentCommand.removeAction(action);
-                        Messages.sendMessage(commandSender, "actionRemoved");
+                        Formatter.sendMessage(commandSender, "actionRemoved");
                     }
                     else {
-                        Messages.sendMessage(commandSender, "actionNotFound");
+                        Formatter.sendMessage(commandSender, "actionNotFound");
                     }
                     return true;
                 }
 
                 if (lastOperator.equalsIgnoreCase("set")) {
                     currentCommand.setActions(new String[]{action});
-                    Messages.sendMessage(commandSender, "actionsSet");
+                    Formatter.sendMessage(commandSender, "actionsSet");
                     return true;
                 }
             }
@@ -403,42 +408,42 @@ public class CCSCCommandExecutor implements CommandExecutor {
                 String permission;
 
                 if (lastOperator.equalsIgnoreCase("edit") && strings.length == 8) {
-                    int index = getIndex(commandSender, strings[6], currentCommand.getPermissions().length);
+                    int index = Strings.getIndex(commandSender, strings[6], currentCommand.getPermissions().length);
                     if (index == -1) {
-                        return false;
+                        return true;
                     }
                     index--;
 
                     permission = strings[7];
-                    Messages.setVariable("permission", permission);
+                    Formatter.setVariable("permission", permission);
 
                     currentCommand.getPermissions()[index] = permission;
-                    Messages.sendMessage(commandSender, "permissionEdited");
+                    Formatter.sendMessage(commandSender, "permissionEdited");
                     return true;
                 }
 
                 if (lastOperator.equalsIgnoreCase("clear") && strings.length == 6) {
                     currentCommand.setPermissions(new String[0]);
-                    Messages.sendMessage(commandSender, "permissionsCleared");
+                    Formatter.sendMessage(commandSender, "permissionsCleared");
                     return true;
                 }
 
                 if (lastOperator.equalsIgnoreCase("default") && strings.length == 6) {
                     currentCommand.setPermissions(new String[]{"ccs.run." + currentCommand.getGroup() + "." + currentCommand.getName()});
-                    Messages.sendMessage(commandSender, "setPermissionsToDefault");
+                    Formatter.sendMessage(commandSender, "setPermissionsToDefault");
                     return true;
                 }
 
                 permission = strings[6];
-                Messages.setVariable("permission", permission);
+                Formatter.setVariable("permission", permission);
 
                 if (lastOperator.equalsIgnoreCase("add")) {
                     if (currentCommand.containsPermission(permission)) {
-                        Messages.sendMessage(commandSender, "permissionAlreadyExist");
+                        Formatter.sendMessage(commandSender, "permissionAlreadyExist");
                     }
                     else {
                         currentCommand.addPermission(permission);
-                        Messages.sendMessage(commandSender, "permissionAdded");
+                        Formatter.sendMessage(commandSender, "permissionAdded");
                     }
                     return true;
                 }
@@ -446,17 +451,17 @@ public class CCSCCommandExecutor implements CommandExecutor {
                 if (lastOperator.equalsIgnoreCase("remove")) {
                     if (currentCommand.containsPermission(permission)) {
                         currentCommand.removePermissions(permission);
-                        Messages.sendMessage(commandSender, "permissionRemoved");
+                        Formatter.sendMessage(commandSender, "permissionRemoved");
                     }
                     else {
-                        Messages.sendMessage(commandSender, "permissionNotFound");
+                        Formatter.sendMessage(commandSender, "permissionNotFound");
                     }
                     return true;
                 }
 
                 if (lastOperator.equalsIgnoreCase("set")) {
                     currentCommand.setPermissions(new String[]{permission});
-                    Messages.sendMessage(commandSender, "permissionsSet");
+                    Formatter.sendMessage(commandSender, "permissionsSet");
                 }
             }
         }
@@ -465,99 +470,64 @@ public class CCSCCommandExecutor implements CommandExecutor {
     }
 
     private void showGroupDetail(CommandSender sender, Group group) {
-        Messages.setVariable("group", group.getName());
+        Formatter.setVariable("group", group.getName());
         int size = group.getCommands().size();
-        Messages.setVariable("size", size);
+        Formatter.setVariable("size", size);
 
-        Messages.sendMessage(sender, "groupDetailsTitle");
+        Formatter.sendMessage(sender, "groupDetailsTitle");
         if (size == 0) {
-            Messages.sendMessage(sender, "noAnyLoadedCommand");
+            Formatter.sendMessage(sender, "noAnyLoadedCommand");
         }
         else {
-            Messages.sendMessage(sender, "loadedCommand");
+            Formatter.sendMessage(sender, "loadedCommand");
             for (io.github.taixue.plugin.customcommands.customcommand.Command command : group.getCommands()) {
-                Messages.setVariable("format", command.getFormat());
-                Messages.setVariable("command", command.getName());
-                Messages.setVariable("size", command.getActions().length);
-                Messages.sendMessage(sender, "commandSummary");
+                Formatter.setVariable("format", command.getFormat());
+                Formatter.setVariable("command", command.getName());
+                Formatter.setVariable("size", command.getActions().length);
+                Formatter.sendMessage(sender, "commandSummary");
             }
         }
     }
 
     private void showCommandDetail(CommandSender sender, io.github.taixue.plugin.customcommands.customcommand.Command command) {
-        Messages.setVariable("command", command.getName());
-        Messages.setVariable("group", command.getGroup().getName());
-        Messages.sendMessage(sender, "commandDetailsTitle");
+        Formatter.setVariable("command", command.getName());
+        Formatter.setVariable("group", command.getGroup().getName());
+        Formatter.sendMessage(sender, "commandDetailsTitle");
 
-        Messages.sendMessageString(sender, "group: " + command.getGroup().getName());
-        Messages.sendMessageString(sender, "name: " + command.getName());
-        Messages.sendMessageString(sender, "format: " + command.getFormat());
-        Messages.sendMessageString(sender, "usage: " + command.getUsageString());
+        Formatter.sendMessageString(sender, "group: " + command.getGroup().getName());
+        Formatter.sendMessageString(sender, "name: " + command.getName());
+        Formatter.sendMessageString(sender, "format: " + command.getFormat());
+        Formatter.sendMessageString(sender, "usage: " + command.getUsageString());
         if (command.getActions().length == 0) {
-            Messages.sendMessageString(sender, "actions (0): (empty)");
+            Formatter.sendMessageString(sender, "actions (0): (empty)");
         }
         else {
-            Messages.sendMessageString(sender, "actions (" + command.getActions().length + "): ");
+            Formatter.sendMessageString(sender, "actions (" + command.getActions().length + "): ");
             for (int index = 0; index < command.getActions().length; index++) {
-                Messages.sendMessageString(sender, (index + 1) + "    > " + command.getActions()[index]);
+                Formatter.sendMessageString(sender, (index + 1) + "    > " + command.getActions()[index]);
             }
         }
-        Messages.sendMessageString(sender, "result: " + command.getResultString());
+        Formatter.sendMessageString(sender, "result: " + command.getResultString());
         if (command.getPermissions().length == 0) {
-            Messages.sendMessageString(sender, "permissions (0): (empty)");
+            Formatter.sendMessageString(sender, "permissions (0): (empty)");
         }
         else {
-            Messages.sendMessageString(sender, "permissions (" + command.getPermissions().length + "): ");
+            Formatter.sendMessageString(sender, "permissions (" + command.getPermissions().length + "): ");
             for (int index = 0; index < command.getPermissions().length; index++) {
-                Messages.setVariable("index", index + 1);
-                Messages.sendMessageString(sender, (index + 1) + "    > " + command.getPermissions()[index]);
+                Formatter.setVariable("index", index + 1);
+                Formatter.sendMessageString(sender, (index + 1) + "    > " + command.getPermissions()[index]);
             }
         }
-        Messages.sendMessageString(sender, "identify: " + command.getIdentifyString());
-    }
-
-    private String getRemainString(String[] strings, int beginIndex) {
-        if (strings.length <= beginIndex) {
-            return "";
-        }
-        String result = strings[beginIndex];
-        if (strings.length > beginIndex + 1) {
-            StringBuilder resultBuilder = new StringBuilder(result);
-            for (int index = 5; index < strings.length; index++) {
-                resultBuilder.append(" ").append(strings[index]);
-            }
-            result = resultBuilder.toString().trim();
-        }
-        return result;
-    }
-
-    private int getIndex(CommandSender commandSender, String indexString, int top) {
-        Messages.setVariable("index", indexString);
-        Messages.setVariable("top", top);
-        if (indexString.matches("\\d+")) {
-            int result = Integer.parseInt(indexString);
-            if (result <= top && result >= 1) {
-                return result;
-            }
-            else {
-                Messages.sendMessage(commandSender, "illegalIndex");
-                return -1;
-            }
-        }
-        else {
-            Messages.sendMessage(commandSender, "illegalIndex");
-            return -1;
-        }
+        Formatter.sendMessageString(sender, "identify: " + command.getIdentifyString());
     }
 
     private void saveCommands(CommandSender sender) {
         try {
             Plugin.commandsConfig.save();
-            Messages.sendMessage(sender, "commandsSaved");
         }
         catch (Exception exception) {
-            Messages.setException(exception);
-            Messages.sendMessage(sender, "exceptionInSavingCommands");
+            Formatter.setException(exception);
+            Formatter.sendMessage(sender, "exceptionInSavingCommands");
             exception.printStackTrace();
         }
     }

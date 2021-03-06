@@ -2,12 +2,16 @@ package io.github.taixue.plugin.customcommands;
 
 import io.github.taixue.plugin.customcommands.commandexecutor.CCSCCommandExecutor;
 import io.github.taixue.plugin.customcommands.commandexecutor.CCSCommandExecutor;
+import io.github.taixue.plugin.customcommands.commandexecutor.CCSECommandExecutor;
 import io.github.taixue.plugin.customcommands.commandexecutor.CCSRCommandExecutor;
 import io.github.taixue.plugin.customcommands.config.CommandsConfig;
 import io.github.taixue.plugin.customcommands.config.PluginConfig;
-import io.github.taixue.plugin.customcommands.language.Messages;
+import io.github.taixue.plugin.customcommands.language.Environment;
+import io.github.taixue.plugin.customcommands.language.Formatter;
+import io.github.taixue.plugin.customcommands.listener.PlayerJoinListener;
 import io.github.taixue.plugin.customcommands.path.Paths;
 import io.github.taixue.plugin.customcommands.util.Files;
+import org.bukkit.entity.Player;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;
@@ -16,7 +20,7 @@ import java.io.File;
 public class Plugin {
     private Plugin() {}
 
-    public static final String VERSION = "3.0";
+    public static final String VERSION = "3.1";
     public static final String NAME = "CustomCommands";
     public static final String AUTHOR = "Chuanwise";
     public static final String ORGANIZATION = "Taixue";
@@ -35,43 +39,44 @@ public class Plugin {
     public static final CCSCommandExecutor CCS_COMMAND_EXECUTOR = new CCSCommandExecutor();
     public static final CCSCCommandExecutor CCSC_COMMAND_EXECUTOR = new CCSCCommandExecutor();
     public static final CCSRCommandExecutor CCSR_COMMAND_EXECUTOR = new CCSRCommandExecutor();
+    public static final CCSECommandExecutor CCSE_COMMAND_EXECUTOR = new CCSECommandExecutor();
+
+    public static final PlayerJoinListener PLAYER_JOIN_LISTENER = new PlayerJoinListener();
 
     private static File configFile;
     private static File commandsFile;
 
     public static void load(CustomCommandPlugin customCommandPlugin) {
         plugin = customCommandPlugin;
-        Messages.setLogger(plugin.getLogger());
+        Formatter.setLogger(plugin.getLogger());
         setCommandExecutors();
 
         if (!plugin.getDataFolder().exists() && !plugin.getDataFolder().mkdirs()) {
-            Messages.severeString("Directory " + plugin.getDataFolder().getName() + " doesn't exist and cannot be created!");
+            Formatter.severeString("Directory " + plugin.getDataFolder().getName() + " doesn't exist and cannot be created!");
             return;
         }
 
         if (!checkFrontPlugins()) {
-            Messages.severeString("Lack some front plugins, can not load" + NAME + ".");
+            Formatter.severeString("Lack some front plugins, can not load" + NAME + ".");
             return;
         }
 
         configFile = new File(plugin.getDataFolder(), Paths.CONFIG);
         commandsFile = new File(plugin.getDataFolder(), Paths.COMMANDS);
 
-        Messages.infoString("----------[" + NAME + " " + VERSION +"]----------");
-        Messages.infoString("\033[1;33mNice to meet you! \033[0m");
-        Messages.infoString("\033[1;36mCustomCommands is written by Chuanwise, open source under GPL GNU license \033[0m");
-        Messages.infoString("\033[1;36mYou can support us in following websites:  \033[0m");
-        Messages.infoString("\033[1;36mGitHub: " + GITHUB + " \033[0m\033[1;33m (Remember to give me a star :> if you like this plugin) \033[0m");
-        Messages.infoString("\033[1;36mMCBBS: " + MCBBS + " \033[0m");
-        Messages.infoString("\033[1;36mJoin the QQ group: " + QQ_GROUP + " to get the newest update and some tech-suppositions. \033[0m");
-        Messages.infoString("---------- loading ----------");
-        Messages.infoString("\033[1;34mloading config... \033[0m");
+        Formatter.infoString("----------[" + NAME + " " + VERSION +"]----------");
+        Formatter.hello();
+        Formatter.infoString("---------- loading ----------");
+        Formatter.infoString(Formatter.blue("loading config..."));
         loadConfig();
-        Messages.infoString("\033[1;34mloading language... \033[0m");
+        Formatter.infoString(Formatter.blue("loading language..."));
         loadLanguage();
-        Messages.infoString("\033[1;34mloading commands... \033[0m");
+        Formatter.infoString(Formatter.blue("loading commands..."));
         loadCommands();
-        Messages.infoString("------ load configurations completely :) ------");
+        Formatter.infoString(Formatter.blue("registing events..."));
+        registerEvents();
+        reloadEnvironment();
+        Formatter.infoString("------ load configurations completely :) ------");
     }
 
     private static boolean checkFrontPlugins() {
@@ -102,14 +107,14 @@ public class Plugin {
     }
 
     private static boolean loadLanguage() {
-        Messages.setLogger(Plugin.plugin.getLogger());
-        return Messages.setLanguage(((String) pluginConfig.get("lang", "en")));
+        Formatter.setLogger(Plugin.plugin.getLogger());
+        return Formatter.setLanguage(((String) pluginConfig.get("lang", "en")));
     }
 
     private static void loadCommands() {
         if (!commandsFile.exists()) {
             if (!Files.fileCopy(Paths.COMMANDS, commandsFile)) {
-                Messages.severeString("cannot create the default commands.yml");
+                Formatter.severeString("cannot create the default commands.yml");
             }
         }
         commandsConfig = new CommandsConfig();
@@ -120,7 +125,7 @@ public class Plugin {
             pluginConfig.save();
         }
         catch (Exception exception) {
-            Messages.severeString(exception + " at saving config.yml");
+            Formatter.severeString(exception + " at saving config.yml");
             exception.printStackTrace();
         }
     }
@@ -130,30 +135,50 @@ public class Plugin {
             commandsConfig.save();
         }
         catch (Exception exception) {
-            Messages.severeString(exception + " at saving commands.yml");
+            Formatter.severeString(exception + " at saving commands.yml");
             exception.printStackTrace();
         }
     }
 
     public static void close() {
-        Messages.infoString("----------[" + NAME + " " + VERSION +"]----------");
-        Messages.infoString("\033[1;33msaving config.yml \033[0m");
+        Formatter.infoString("----------[" + NAME + " " + VERSION +"]----------");
+        Formatter.infoString("\033[1;33msaving config.yml \033[0m");
         saveConfig();
-        Messages.infoString("\033[1;33msaving commands.yml \033[0m");
+        Formatter.infoString("\033[1;33msaving commands.yml \033[0m");
         saveCommands();
-        Messages.infoString("------ all configuration saved ------");
+        Formatter.infoString("------ all configuration saved ------");
+        Formatter.hello();
+        Formatter.infoString("------ Think you for using CustomCommands, see you :) ------");
+    }
 
-        Messages.infoString("\033[1;36mYou can support us in following websites:  \033[0m");
-        Messages.infoString("\033[1;29mGitHub: " + GITHUB + " \033[0m");
-        Messages.infoString("\033[1;29mMCBBS: " + MCBBS + " \033[0m");
-        Messages.infoString("\033[1;29mJoin the QQ group: \033[1;33m " + QQ_GROUP + " \033[1;29m to get the newest update and some tech-suppositions. \033[0m");
+    private static void registerEvents() {
+        plugin.getServer().getPluginManager().registerEvents(PLAYER_JOIN_LISTENER, plugin);
+    }
 
-        Messages.infoString("------ Think you for using CustomCommands, see you :) ------");
+    public static void loadOnlinePlayerEnvironment() {
+        for (Player player: plugin.getServer().getOnlinePlayers()) {
+            Formatter.infoString(Formatter.yellow("loading player: " + player.getName() + "'s environment..."));
+            PLAYER_JOIN_LISTENER.loadPlayerEnvironment(player);
+        }
+    }
+
+    public static void loadGlobalEnvironment() {
+        Formatter.infoString(Formatter.yellow("loading global environment..."));
+        PLAYER_JOIN_LISTENER.loadPlayerEnvironment(null);
     }
 
     private static void setCommandExecutors() {
         plugin.getCommand("customcommandsrun").setExecutor(CCSR_COMMAND_EXECUTOR);
         plugin.getCommand("customcommandsconfig").setExecutor(CCSC_COMMAND_EXECUTOR);
         plugin.getCommand("customcommands").setExecutor(CCS_COMMAND_EXECUTOR);
+        plugin.getCommand("customcommandsenvironment").setExecutor(CCSE_COMMAND_EXECUTOR);
+    }
+
+    public static void reloadEnvironment() {
+        Environment.clear();
+        Formatter.infoString(Formatter.blue("loading global environments..."));
+        loadGlobalEnvironment();
+        Formatter.infoString(Formatter.blue("loading online players' environments..."));
+        loadOnlinePlayerEnvironment();
     }
 }

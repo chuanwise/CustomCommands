@@ -1,4 +1,4 @@
-package io.github.taixue.plugin.customcommands.customcommand;
+package io.github.taixue.plugin.customcommands.script;
 
 public class SleepScript extends Script {
     private int time = 0;
