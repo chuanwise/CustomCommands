@@ -2,10 +2,13 @@
   <artifact type="jar" name="CustomCommands:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/CustomCommands_jar</output-path>
     <root id="archive" name="CustomCommands.jar">
-      <element id="module-output" name="Custom-Commands" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../../jar/snakeyaml-1.27.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../../jar/fastjson-1.2.75.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../../jar/spigot-api-1.10-R0.1-20160618.090835-32.jar" path-in-jar="/" />
+      <element id="module-output" name="CustomCommands" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../tools/maven/repositoriy/com/google/guava/guava/21.0/guava-21.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../tools/maven/repositoriy/org/yaml/snakeyaml/1.25/snakeyaml-1.25.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../tools/maven/repositoriy/org/bukkit/bukkit/1.15.1-R0.1-SNAPSHOT/bukkit-1.15.1-R0.1-SNAPSHOT.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../tools/maven/repositoriy/commons-lang/commons-lang/2.6/commons-lang-2.6.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../tools/maven/repositoriy/com/alibaba/fastjson/1.2.75/fastjson-1.2.75.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../tools/maven/repositoriy/com/google/code/gson/gson/2.8.0/gson-2.8.0.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

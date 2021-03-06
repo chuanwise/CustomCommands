@@ -1,0 +1,68 @@
+name: Custom-Commands
+main: org.taixue.customcommands.Plugin
+author: Chuanwise
+version: 4.0
+website: https://github.com/Chuanwise/CustomCommands/
+
+# softdepend: [PlaceholderAPI]
+
+commands:
+  customcommands:
+    description: Generic Custom-commands command
+    aliases: [ccs]
+    usage: |
+      Usage:
+      /ccs reload                         reload all configurations
+      /ccs version                        show version and some other information
+      /ccs debug                          enable or disable debug mode
+      /ccs <config | run | env> <remain-part>   sames with /ccs<r|c|e> <remain-part>
+  customcommandsconfig:
+    description: Generic Custom-commands command for configuring
+    aliases: [ccsc, ccsconfig]
+    usage: |
+      Usage:
+      /ccsc val <variable-name> [set-to]   get or set a variable in config
+  customcommandsrun:
+    description: Run configured commands
+    aliases: [ccsr, ccsrun]
+    usage: |
+      Usage:
+      /ccsr <command-name> [arguments-list]
+  customcommandsenvironment:
+    description: Set, edit or remove a variable
+    aliases: [ccse, ccsenv]
+    usage: |
+      Usage:
+      /ccse <global | personal> set <variable-name> <set-to>
+      /ccse <global | personal> remove <variable-name>
+      /ccse <global | personal> clear
+      /ccse reload
+
+permissions:
+  ccs.*:
+    default: op
+    description: Give players with op everything by default
+    children:
+      ccs.run.*: true
+  ccs.version:
+    default: true
+    description: Permission to see version, name and other information of CustomCommands
+  ccs.debug:
+    default: op
+    description: enable or disable debug mode
+  ccs.reload:
+    default: op
+    description: reload all configurations
+  ccs.config.val.set:
+    default: op
+    description: set value of variable in config.yml
+  ccs.config.val.look:
+    default: op
+    description: look value of variable in config.yml
+  ccs.env.global:
+    default: op
+  ccs.env.personal:
+    default: true
+  ccs.env.reload:
+    default: op
+

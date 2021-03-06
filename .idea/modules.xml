@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Custom-Commands.iml" filepath="$PROJECT_DIR$/Custom-Commands.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CustomCommands.iml" filepath="$PROJECT_DIR$/CustomCommands.iml" />
     </modules>
   </component>
 </project>

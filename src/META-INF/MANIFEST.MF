@@ -1,3 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: sun.plugin2.main.client.PluginMain
-
