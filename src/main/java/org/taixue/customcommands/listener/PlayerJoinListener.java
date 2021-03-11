@@ -19,7 +19,6 @@ public class PlayerJoinListener implements Listener {
 
         if (Plugin.PLAYER_QUIT_LISTENER.isWaiting(player)) {
             Plugin.PLAYER_QUIT_LISTENER.stopWaitPlayer(player);
-            Messages.infoLang("interruptToWaitPlayerLeave");
         }
         else {
             if (!Environment.containsPlayer(player)) {

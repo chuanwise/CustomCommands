@@ -59,7 +59,7 @@ public class Commands {
             result.setResultString(((String) memorySection.get("result")));
         }
         else {
-            result.setResultString(Messages.replaceVariableLanguage("defaultResultString"));
+            result.setResultString(null);
         }
         Messages.setVariable("result", result.getResultString());
 
@@ -148,7 +148,7 @@ public class Commands {
         command.setActions(new String[0]);
         command.setUsageString("/ccsr " + group.getName() + " " + command.getFormat());
         command.setIdentify(Command.Identify.AUTO);
-        command.setResultString(Messages.replaceVariableLanguage("defaultResultString"));
+        command.setResultString(null);
         command.setPermissions(new String[]{"ccs.run." + group.getName() + "." + command.getName()});
         return command;
     }

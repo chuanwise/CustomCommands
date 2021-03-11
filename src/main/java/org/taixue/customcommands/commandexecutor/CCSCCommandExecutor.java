@@ -17,9 +17,6 @@ public class CCSCCommandExecutor implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        // ccs.config.val
-        // ccs.config.val
-        Messages.clearVariables();
         String permissionNode;
         if (strings.length == 0) {
             return false;

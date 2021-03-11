@@ -37,7 +37,7 @@ public class PlayerQuitListener implements Listener {
     public void stopWaitPlayer(Player player) {
         UnloadPlayerEnvironmentThread thread = playerThreads.get(player.getUniqueId().toString());
         if (Objects.nonNull(thread)) {
-            thread.stop();
+            thread.interrupt();
             playerThreads.remove(player.getUniqueId().toString());
         }
     }
@@ -77,6 +77,7 @@ class UnloadPlayerEnvironmentThread extends Thread {
             Plugin.PLAYER_QUIT_LISTENER.stopWaitPlayer(player);
         }
         catch (InterruptedException e) {
+            Messages.infoLang("interruptToWaitPlayerLeave");
         }
     }
 }

@@ -28,7 +28,6 @@ public class CCSRCommandExecutor implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, org.bukkit.command.Command command, String s, String[] strings) {
-        Messages.clearVariables();
         if (strings.length >= 1) {
             Messages.setVariable("player", commandSender.getName());
             if (commandSender instanceof Player) {
@@ -71,7 +70,6 @@ public class CCSRCommandExecutor implements CommandExecutor {
                     for (Command cmd : commands) {
                         Messages.sendMessageString(commandSender, cmd.getUsageString());
                     }
-
                     return true;
                 }
 
@@ -190,7 +188,9 @@ public class CCSRCommandExecutor implements CommandExecutor {
                     commandSender.setOp(isOp);
                 }
 
-                Messages.sendMessageString(commandSender, customCommand.getFormattedResultString());
+                if (Objects.nonNull(customCommand.getResultString())) {
+                    Messages.sendMessageString(commandSender, customCommand.getFormattedResultString());
+                }
             }
             catch (Exception exception) {
                 Messages.setVariable("exception", exception.toString());

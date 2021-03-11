@@ -78,8 +78,8 @@ public class Plugin extends JavaPlugin {
         loadLanguage();
         Messages.infoString(Messages.blue("loading commands..."));
         loadCommands();
-        Messages.infoString(Messages.blue("registing events..."));
-        registerEvents();
+//        Messages.infoString(Messages.blue("registing events..."));
+//        registerEvents();
         reloadEnvironment();
         Messages.infoString("------ load configurations completely :) ------");
     }

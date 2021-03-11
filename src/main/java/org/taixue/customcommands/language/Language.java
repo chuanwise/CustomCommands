@@ -16,7 +16,6 @@ public class Language {
         public String illegalIdentify;
         public String lackPermission;
         public String parameterCannotBeBull;
-        public String defaultResultString;
         public String illegalCommandName;
         public String illegalGroupName;
         public String exceptionInLoadingGroup;

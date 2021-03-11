@@ -53,7 +53,6 @@ public class Command {
      * @return          true only if it's correct arguments.
      */
     public boolean parseCommand(CommandSender sender, String[] arguments) {
-        Messages.clearVariables();
         Messages.setVariable("command", name);
         Messages.setVariable("permission", "ccs.run." + group.getName() +"." + name);
 

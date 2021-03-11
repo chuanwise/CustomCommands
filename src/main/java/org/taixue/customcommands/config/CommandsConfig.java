@@ -127,7 +127,7 @@ public class CommandsConfig extends Config {
                     commandSection.set("identify", command.getIdentifyString());
                 }
 
-                if (!isDefaultResult(command)) {
+                if (Objects.nonNull(command.getResultString())) {
                     commandSection.set("result", command.getResultString());
                 }
 
@@ -152,9 +152,5 @@ public class CommandsConfig extends Config {
     public boolean isDefaultPermissions(Command command) {
         return command.getPermissions().length == 1 &&
                 command.getPermissions()[0].equals("ccs.run." + command.getGroup().getName() + "." + command.getName());
-    }
-
-    public boolean isDefaultResult(Command command) {
-        return command.getResultString().equals(Messages.getVariable("defaultResultString"));
     }
 }
