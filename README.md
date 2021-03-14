@@ -1,12 +1,12 @@
 # CustomCommands：自定义指令
 `CustomCommands` 插件也叫 `CCS（CustomCommandS）`或 `Custom-Commands` 等，允许自己设置一些指令的格式，以简化输入。
 
-![CCS logo](https://github.com/Chuanwise/CustomCommands/blob/main/logo_small.png "CCS logo")
-
 * 插件 QQ 群：`1028582500`
 * 作者：椽子。
 * 明城京联合太学，保留所有权利。
 * 请遵循 `GNU` 开源协议使用 `CCS`。
+
+![CCS logo](./logo_small.png "CCS logo")
 
 ## 目录
 * [CCS能做什么？](#CCS能做什么？)
