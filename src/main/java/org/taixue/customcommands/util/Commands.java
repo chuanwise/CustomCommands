@@ -1,6 +1,7 @@
 package org.taixue.customcommands.util;
 
 import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
 import org.taixue.customcommands.customcommand.Command;
 import org.taixue.customcommands.customcommand.Group;
 import org.taixue.customcommands.language.Messages;
@@ -108,6 +109,12 @@ public class Commands {
             }
         }
         return result;
+    }
+
+    @NotNull
+    public static ArrayList<Command> getNoRemainCommands(@NotNull ArrayList<Command> commands) {
+        commands.removeIf(e -> e.hasRemain());
+        return commands;
     }
 
     public static boolean isLegalCommandMemorySection(@NotNull MemorySection memorySection) {

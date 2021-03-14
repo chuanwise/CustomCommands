@@ -1,7 +1,7 @@
 name: Custom-Commands
 main: org.taixue.customcommands.Plugin
 author: Chuanwise
-version: 4.1
+version: 4.1.1
 website: https://github.com/Chuanwise/CustomCommands/
 
 # softdepend: [PlaceholderAPI]

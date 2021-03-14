@@ -1,6 +1,8 @@
 # CustomCommands：自定义指令
 `CustomCommands` 插件也叫 `CCS（CustomCommandS）`或 `Custom-Commands` 等，允许自己设置一些指令的格式，以简化输入。
 
+![CCS logo](https://github.com/Chuanwise/CustomCommands/blob/main/logo_small.png "CCS logo")
+
 * 插件 QQ 群：`1028582500`
 * 作者：椽子。
 * 明城京联合太学，保留所有权利。
@@ -27,6 +29,7 @@
   * [正在开发的功能](#正在开发的功能)
   * [可能要增加的功能](#可能要增加的功能)
 * [高级功能](#高级功能)
+  * [强匹配与弱匹配](#强匹配与弱匹配)
   * [变量表机制](#变量表机制)
   * [模式匹配机制](#模式匹配机制)
 * [联系方式](#联系方式)
@@ -120,6 +123,9 @@ config:
 
   # 修改配置后是否自动保存
   auto-save: true
+
+  # 是否开启强匹配
+  strong-match: true
   
   # 该功能尚待完善：玩家退出服务器多久（毫秒）卸载其私人变量表
   # wait-for-unload: 300000
@@ -134,6 +140,8 @@ config:
 默认值：`true`
 
 修改插件配置后是否立即保存。若选择 `false`，插件将在关闭服务器时自动保存所做的修改。你也可以使用 `/ccsc save` 手动保存。
+
+其他相关内容请阅览高级主题[模式匹配机制](#模式匹配机制)。
 
 ### commands.yml
 默认的 `commands.yml` 的内容是：
@@ -400,6 +408,16 @@ commands:
 若经历以上步骤还是无法找到变量，它将会保持 `{变量名}` 的原样。
 
 ### 模式匹配机制
+
+### 强匹配与弱匹配
+若输入 `/ccsr taixue work into test`，如果存在一下分支能匹配该输入：
+
+1. `/ccsr taixue {remain}`
+1. `/ccsr taixue work into {workspace}`
+
+显然用户希望匹配的是第二种格式的输入。
+
+如果配置文件 `config.yml` 中 `strong-match` 被设置为 `true`，则 `CCS` 会认为不使用 `{remain}` 的分支是 `强匹配分支`。如果能与用户输入匹配的分支有多个且只有一个强匹配分支，则会认为用户输入的是该分支。
 
 #### 匹配权限
 匹配某一个指令分支的权限。默认是 `[ ccs.run.<该分支所处组名>.<分支名> ]`。

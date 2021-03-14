@@ -23,7 +23,7 @@ import org.yaml.snakeyaml.error.YAMLException;
 import java.io.File;
 
 public class Plugin extends JavaPlugin {
-    public static final String VERSION = "4.1";
+    public static final String VERSION = "4.1.1";
     public static final String NAME = "CustomCommands";
     public static final String AUTHOR = "Chuanwise";
     public static final String ORGANIZATION = "Taixue";
@@ -38,6 +38,7 @@ public class Plugin extends JavaPlugin {
 
     public static boolean debug = false;
     public static boolean autoSave = true;
+    public static boolean strongMath = true;
     public static int waitForUnload = 5 * 60000;
 
     public static final CCSCommandExecutor CCS_COMMAND_EXECUTOR = new CCSCommandExecutor();
@@ -105,6 +106,7 @@ public class Plugin extends JavaPlugin {
             pluginConfig = new PluginConfig(configFile, "config");
             debug = ((Boolean) pluginConfig.get("debug", false));
             autoSave = ((Boolean) pluginConfig.get("auto-save", true));
+            strongMath = ((Boolean) pluginConfig.get("strong-match", true));
             waitForUnload = ((Integer) pluginConfig.get("wait-for-unload", 5 * 60000));
         }
         catch (YAMLException exception) {

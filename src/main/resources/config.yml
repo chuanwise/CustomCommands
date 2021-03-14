@@ -6,3 +6,4 @@ config:
   max-iterations: 10
   auto-save: true
   wait-for-unload: 10000
+  strong-match: true

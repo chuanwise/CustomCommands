@@ -29,12 +29,14 @@ public class CCSRCommandExecutor implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, org.bukkit.command.Command command, String s, String[] strings) {
         if (strings.length >= 1) {
+            // 设置一些变量
             Messages.setVariable("player", commandSender.getName());
             if (commandSender instanceof Player) {
                 Messages.setVariable("displayName", ((Player) commandSender).getDisplayName());
                 Messages.setVariable("UUID", ((Player) commandSender).getUniqueId().toString());
                 Messages.setVariable("world", ((Player) commandSender).getWorld().getName());
             }
+
             String groupName = strings[0];
             Group group = Plugin.commandsConfig.getGroup(groupName);
             Messages.setVariable("group", groupName);
@@ -46,6 +48,7 @@ public class CCSRCommandExecutor implements CommandExecutor {
             try {
                 ArrayList<Command> matchableCommands = group.getCommands(strings);
                 ArrayList<Command> commands = Commands.screenUsableCommand(commandSender, matchableCommands);
+                Command customCommand = null;
 
                 if (commands.isEmpty()) {
                     if (matchableCommands.isEmpty()) {
@@ -65,12 +68,29 @@ public class CCSRCommandExecutor implements CommandExecutor {
                     return true;
                 }
                 else if (commands.size() != 1) {
-                    Messages.setVariable("size", Integer.toString(commands.size()));
-                    Messages.sendMessage(commandSender, "multipleCommands");
-                    for (Command cmd : commands) {
-                        Messages.sendMessageString(commandSender, cmd.getUsageString());
+                    // 去除非强匹配分支
+                    int hasRemainCommandCounter = 0;
+                    for (Command cmd: commands) {
+                        if (cmd.hasRemain()) {
+                            hasRemainCommandCounter++;
+                        }
+                        else {
+                            customCommand = cmd;
+                        }
                     }
-                    return true;
+                    // 如果有多个强匹配分支
+                    if (commands.size() - hasRemainCommandCounter != 1 || !Plugin.strongMath) {
+                        Messages.setVariable("size", Integer.toString(commands.size()));
+                        Messages.sendMessage(commandSender, "multipleCommands");
+                        for (Command cmd : commands) {
+                            Messages.sendMessageString(commandSender, cmd.getUsageString());
+                        }
+                        return true;
+                    }
+                    // 若只有一个强匹配，则采用该匹配
+                }
+                else {
+                    customCommand = commands.get(0);
                 }
 
                 // personal variables
@@ -107,7 +127,6 @@ public class CCSRCommandExecutor implements CommandExecutor {
                     }
                 }
 
-                Command customCommand = commands.get(0);
                 if (customCommand.parseCommand(commandSender, strings)) {
                     if (Plugin.debug) {
                         Messages.debugString(commandSender, "variable-value list:");

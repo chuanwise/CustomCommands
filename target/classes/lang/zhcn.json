@@ -14,7 +14,6 @@
   "illegalIdentify": "发送指令的身份只能是 auto、console、bypass 或 player:{player}",
   "lackPermission": "缺少权限节点：{permission}",
   "parameterCannotBeBull": "形式参数 {parameter} 名应该是仅由英文字母、数字和下划线组成的字符串，不能为空",
-  "defaultResultString": "指令已执行",
   "illegalCommandName": "非法的指令名：{command}（位于指令组 {group} 中）",
   "illegalGroupName": "非法的指令组名：{group}",
   "exceptionInLoadingGroup": "加载指令组 {group} 时出现异常：{exception}，查看控制台输出以获得详细信息",

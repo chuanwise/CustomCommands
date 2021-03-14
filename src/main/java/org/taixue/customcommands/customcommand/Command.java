@@ -394,4 +394,13 @@ public class Command {
         this.identifyPlayer = identifyPlayer;
         identify = Identify.PLAYER;
     }
+
+    public boolean hasRemain() {
+        for (int i = parameters.length - 1; i >= 0; i --) {
+            if (parameters[i].equals("{remain}")) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

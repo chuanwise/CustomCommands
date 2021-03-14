@@ -16,18 +16,18 @@ commands:
       /ccs version                        show version and some other information
       /ccs debug                          enable or disable debug mode
       /ccs <config | run | env> <remain-part>   sames with /ccs<r|c|e> <remain-part>
+      ... (see https://github.com/Chuanwise/CustomCommands)
   customcommandsconfig:
     description: Generic Custom-commands command for configuring
     aliases: [ccsc, ccsconfig]
-    usage: |
-      Usage:
-      /ccsc val <variable-name> [set-to]   get or set a variable in config
+    usage: 'see: https://github.com/Chuanwise/CustomCommands'
   customcommandsrun:
     description: Run configured commands
     aliases: [ccsr, ccsrun]
     usage: |
       Usage:
       /ccsr <command-name> [arguments-list]
+      ... (see https://github.com/Chuanwise/CustomCommands)
   customcommandsenvironment:
     description: Set, edit or remove a variable
     aliases: [ccse, ccsenv]
@@ -37,6 +37,7 @@ commands:
       /ccse <global | personal> remove <variable-name>
       /ccse <global | personal> clear
       /ccse reload
+      ... (see https://github.com/Chuanwise/CustomCommands)
 
 permissions:
   ccs.*:
