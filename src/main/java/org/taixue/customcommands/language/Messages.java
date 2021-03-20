@@ -22,6 +22,9 @@ public class Messages {
     private static HashMap<String, String> environment = new HashMap<>();
 
     public static boolean setLanguage(@NotNull String languageCode) {
+        if (Objects.nonNull(language)) {
+            return true;
+        }
         try {
             language = JSON.parseObject(Plugin.plugin.getResource(Paths.LANG_DIR + Paths.SPLIT + languageCode + ".json"),
                     Language.class);

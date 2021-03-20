@@ -17,6 +17,12 @@ public class Environment {
     // Player null means 'global'
     private static final Map<Player, Map<String, String>> environment = new HashMap<>();
 
+    public Environment() {
+        if (!directory.exists() || !directory.isDirectory()) {
+            directory.mkdirs();
+        }
+    }
+
     public static boolean containsPlayer(Player player) {
         for (Player p: environment.keySet()) {
             if (Objects.isNull(p)) {

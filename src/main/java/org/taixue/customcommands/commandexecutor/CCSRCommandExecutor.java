@@ -13,6 +13,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
@@ -125,6 +126,10 @@ public class CCSRCommandExecutor implements CommandExecutor {
                             Messages.debugString(commandSender,  "    > " + variableName + ": " + globalEnvironment.get(variableName));
                         }
                     }
+                }
+
+                if (Plugin.debug) {
+                    Messages.debugString(commandSender, "format: " + customCommand.getFormat());
                 }
 
                 if (customCommand.parseCommand(commandSender, strings)) {

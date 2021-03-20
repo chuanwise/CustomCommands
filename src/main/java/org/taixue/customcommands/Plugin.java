@@ -14,8 +14,6 @@ import org.taixue.customcommands.config.CommandsConfig;
 import org.taixue.customcommands.config.PluginConfig;
 import org.taixue.customcommands.language.Environment;
 import org.taixue.customcommands.language.Messages;
-import org.taixue.customcommands.listener.PlayerJoinListener;
-import org.taixue.customcommands.listener.PlayerQuitListener;
 import org.taixue.customcommands.util.Files;
 import org.taixue.customcommands.util.Paths;
 import org.yaml.snakeyaml.error.YAMLException;
@@ -23,7 +21,7 @@ import org.yaml.snakeyaml.error.YAMLException;
 import java.io.File;
 
 public class Plugin extends JavaPlugin {
-    public static final String VERSION = "4.1.1";
+    public static final String VERSION = "4.2";
     public static final String NAME = "CustomCommands";
     public static final String AUTHOR = "Chuanwise";
     public static final String ORGANIZATION = "Taixue";
@@ -45,9 +43,6 @@ public class Plugin extends JavaPlugin {
     public static final CCSCCommandExecutor CCSC_COMMAND_EXECUTOR = new CCSCCommandExecutor();
     public static final CCSRCommandExecutor CCSR_COMMAND_EXECUTOR = new CCSRCommandExecutor();
     public static final CCSECommandExecutor CCSE_COMMAND_EXECUTOR = new CCSECommandExecutor();
-
-    public static final PlayerJoinListener PLAYER_JOIN_LISTENER = new PlayerJoinListener();
-    public static final PlayerQuitListener PLAYER_QUIT_LISTENER = new PlayerQuitListener();
 
     private static File configFile;
     private static File commandsFile;
@@ -86,11 +81,6 @@ public class Plugin extends JavaPlugin {
     }
 
     private static boolean checkFrontPlugins() {
-//        org.bukkit.plugin.Plugin plugin =
-//                Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
-//        if (plugin != null){
-//            System.out.println("这个服务器安装了PAPI插件！");
-//        }
         return true;
     }
 
@@ -149,7 +139,6 @@ public class Plugin extends JavaPlugin {
     }
 
     public static void close() {
-        PLAYER_QUIT_LISTENER.shutdown();
         Messages.infoString("----------[" + NAME + " " + VERSION +"]----------");
         Messages.infoString("\033[1;33msaving config.yml \033[0m");
         saveConfigFile();
@@ -160,21 +149,15 @@ public class Plugin extends JavaPlugin {
         Messages.infoString("------ Think you for using CustomCommands, see you :) ------");
     }
 
-    private static void registerEvents() {
-        plugin.getServer().getPluginManager().registerEvents(PLAYER_JOIN_LISTENER, plugin);
-        plugin.getServer().getPluginManager().registerEvents(PLAYER_QUIT_LISTENER, plugin);
-    }
-
     public static void loadOnlinePlayerEnvironment() {
         for (Player player: plugin.getServer().getOnlinePlayers()) {
             Messages.infoString(Messages.yellow("loading player: " + player.getName() + "'s environment..."));
-            PLAYER_JOIN_LISTENER.loadPlayerEnvironment(player);
+            Environment.load(player);
         }
     }
 
     public static void loadGlobalEnvironment() {
         Messages.infoString(Messages.yellow("loading global environment..."));
-        PLAYER_JOIN_LISTENER.loadPlayerEnvironment(null);
     }
 
     private static void setCommandExecutors() {
