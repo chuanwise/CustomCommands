@@ -46,6 +46,8 @@ public class CCSRCommandExecutor implements CommandExecutor {
                 Messages.sendMessage(commandSender, "undefinedGroup");
                 return true;
             }
+
+            boolean isOp = commandSender.isOp();
             try {
                 ArrayList<Command> matchableCommands = group.getCommands(strings);
                 ArrayList<Command> commands = Commands.screenUsableCommand(commandSender, matchableCommands);
@@ -96,35 +98,46 @@ public class CCSRCommandExecutor implements CommandExecutor {
 
                 // personal variables
                 if (Plugin.debug) {
-                    Map<String, String> personalEnvironment;
-                    if (commandSender instanceof Player) {
-                        personalEnvironment = Environment.getPlayerEnvironment((Player) commandSender);
-                        Messages.debugString(commandSender, "personal variables:");
-                        if (personalEnvironment.isEmpty()) {
-                            Messages.debugString(commandSender, "(no any personal variables)");
-                        }
-                        else {
-                            for (String variableName: personalEnvironment.keySet()) {
-                                Messages.debugString(commandSender,  "    > " + variableName + ": " + personalEnvironment.get(variableName));
+                    try {
+                        Map<String, String> personalEnvironment;
+                        if (commandSender instanceof Player && Environment.containsPlayer(((Player) commandSender))) {
+                            personalEnvironment = Environment.getPlayerEnvironment((Player) commandSender);
+                            Messages.debugString(commandSender, "personal variables:");
+                            if (personalEnvironment.isEmpty()) {
+                                Messages.debugString(commandSender, "(no any personal variables)");
+                            } else {
+                                for (String variableName : personalEnvironment.keySet()) {
+                                    Messages.debugString(commandSender, "    > " + variableName + ": " + personalEnvironment.get(variableName));
+                                }
                             }
+                        } else {
+                            Messages.debugString(commandSender, "No personal variables, because you aren't a player or your environment hasn't be load yet.");
                         }
                     }
-                    else {
-                        Messages.debugString(commandSender, "No personal variables, because command sender isn't a player.");
+                    catch (Exception exception) {
+                        Messages.setVariable("exception", exception.toString());
+                        Messages.sendMessage(commandSender, "unknownException");
+                        exception.printStackTrace();
                     }
                 }
 
                 // global variables
                 if (Plugin.debug) {
-                    Map<String, String> globalEnvironment = Environment.getPlayerEnvironment(null);
-                    Messages.debugString(commandSender, "global variables:");
-                    if (Objects.isNull(globalEnvironment) || globalEnvironment.isEmpty()) {
-                        Messages.debugString(commandSender, "(no any global variables)");
-                    }
-                    else {
-                        for (String variableName: globalEnvironment.keySet()) {
-                            Messages.debugString(commandSender,  "    > " + variableName + ": " + globalEnvironment.get(variableName));
+                    try {
+                        Map<String, String> globalEnvironment = Environment.getPlayerEnvironment(null);
+                        Messages.debugString(commandSender, "global variables:");
+                        if (Objects.isNull(globalEnvironment) || globalEnvironment.isEmpty()) {
+                            Messages.debugString(commandSender, "(no any global variables)");
+                        } else {
+                            for (String variableName : globalEnvironment.keySet()) {
+                                Messages.debugString(commandSender, "    > " + variableName + ": " + globalEnvironment.get(variableName));
+                            }
                         }
+                    }
+                    catch (Exception exception) {
+                        Messages.setVariable("exception", exception.toString());
+                        Messages.sendMessage(commandSender, "unknownException");
+                        exception.printStackTrace();
                     }
                 }
 
@@ -150,7 +163,6 @@ public class CCSRCommandExecutor implements CommandExecutor {
 
                 CommandSender actionSender;
                 Player player = null;
-                boolean isOp = commandSender.isOp();
 
                 switch (customCommand.getIdentify()) {
                     case AUTO:
@@ -208,10 +220,6 @@ public class CCSRCommandExecutor implements CommandExecutor {
                     }
                 }
 
-                if (customCommand.getIdentify() == Command.Identify.BYPASS) {
-                    commandSender.setOp(isOp);
-                }
-
                 if (Objects.nonNull(customCommand.getResultString())) {
                     Messages.sendMessageString(commandSender, customCommand.getFormattedResultString());
                 }
@@ -220,6 +228,9 @@ public class CCSRCommandExecutor implements CommandExecutor {
                 Messages.setVariable("exception", exception.toString());
                 Messages.sendMessage(commandSender, "unknownException");
                 exception.printStackTrace();
+            }
+            finally {
+                commandSender.setOp(isOp);
             }
             return true;
         }
