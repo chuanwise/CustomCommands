@@ -152,10 +152,11 @@ public class Command {
             }
         }
 
-        if (argIndex < arguments.length && !parameters[parameters.length - 1].equals("{remain}")) {
+        boolean endWithRemain = (parameters.length == 0 ? false : parameters[parameters.length - 1].equals("{remain}"));
+        if (argIndex < arguments.length && !endWithRemain) {
             return false;
         }
-        if (paraIndex < parameters.length && !parameters[parameters.length - 1].equals("{remain}")) {
+        if (paraIndex < parameters.length && !endWithRemain) {
             return false;
         }
         return true;
