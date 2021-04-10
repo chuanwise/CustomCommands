@@ -1,6 +1,5 @@
 package org.taixue.customcommands.config;
 
-import com.sun.istack.internal.NotNull;
 import org.taixue.customcommands.customcommand.Command;
 import org.taixue.customcommands.language.Messages;
 import org.taixue.customcommands.customcommand.Group;
@@ -10,6 +9,7 @@ import org.taixue.customcommands.script.Strings;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,12 +33,11 @@ public class CommandsConfig extends Config {
         try {
             Map<String, Object> groupsMap = configSection.getValues(false);
             Set<String> loadedGroups = new HashSet<>();
-            for (String groupName: groupsMap.keySet()) {
+            for (String groupName : groupsMap.keySet()) {
                 Messages.setVariable("group", groupName);
                 if (loadedGroups.contains(groupName)) {
                     Messages.severeLanguage("redefinedGroups");
-                }
-                else {
+                } else {
                     if (Strings.isLegalGroupName(groupName)) {
                         loadedGroups.add(groupName);
                         try {
@@ -51,14 +50,12 @@ public class CommandsConfig extends Config {
                             exception.printStackTrace();
                         }
 
-                    }
-                    else {
+                    } else {
                         Messages.severeLanguage("illegalGroupName");
                     }
                 }
             }
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             Messages.setException(exception);
             Messages.severeLanguage("exceptionInLoadingFile");
             exception.printStackTrace();
@@ -76,11 +73,12 @@ public class CommandsConfig extends Config {
 
     /**
      * 通过组名查找指令组
+     * 
      * @param groupName 组名
-     * @return          指令组
+     * @return 指令组
      */
     public Group getGroup(String groupName) {
-        for (Group group: groups) {
+        for (Group group : groups) {
             if (group.getName().equals(groupName)) {
                 return group;
             }
@@ -109,11 +107,11 @@ public class CommandsConfig extends Config {
 
     @Override
     public void save() throws IOException {
-//        fileConfiguration.set("commands", null);
+        // fileConfiguration.set("commands", null);
         configSection = fileConfiguration.createSection("commands");
-        for (Group group: groups) {
+        for (Group group : groups) {
             ConfigurationSection groupSection = configSection.createSection(group.getName());
-            for (Command command: group.getCommands()) {
+            for (Command command : group.getCommands()) {
                 ConfigurationSection commandSection = groupSection.createSection(command.getName());
                 commandSection.set("format", command.getFormat());
                 commandSection.set("actions", command.getActions());
@@ -121,7 +119,7 @@ public class CommandsConfig extends Config {
                 if (!isDefaultUsage(command)) {
                     commandSection.set("usage", command.getUsageString());
                 }
-//                commandSection.set("matches", command.getMatches());
+                // commandSection.set("matches", command.getMatches());
 
                 if (!isDefaultIdentify(command)) {
                     commandSection.set("identify", command.getIdentifyString());
@@ -140,9 +138,7 @@ public class CommandsConfig extends Config {
     }
 
     public boolean isDefaultUsage(Command command) {
-        return command.getUsageString().equals("/ccsr " +
-                command.getGroup().getName() + " " +
-                command.getFormat());
+        return command.getUsageString().equals("/ccsr " + command.getGroup().getName() + " " + command.getFormat());
     }
 
     public boolean isDefaultIdentify(Command command) {
@@ -150,7 +146,7 @@ public class CommandsConfig extends Config {
     }
 
     public boolean isDefaultPermissions(Command command) {
-        return command.getPermissions().length == 1 &&
-                command.getPermissions()[0].equals("ccs.run." + command.getGroup().getName() + "." + command.getName());
+        return command.getPermissions().length == 1 && command.getPermissions()[0]
+                .equals("ccs.run." + command.getGroup().getName() + "." + command.getName());
     }
 }

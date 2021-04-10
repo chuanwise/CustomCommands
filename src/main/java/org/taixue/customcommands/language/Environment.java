@@ -1,10 +1,10 @@
 package org.taixue.customcommands.language;
 
-import com.sun.istack.internal.Nullable;
 import org.taixue.customcommands.Plugin;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class Environment {
     }
 
     public static boolean containsPlayer(Player player) {
-        for (Player p: environment.keySet()) {
+        for (Player p : environment.keySet()) {
             if (Objects.isNull(p)) {
                 continue;
             }
@@ -65,8 +65,7 @@ public class Environment {
     public static String get(Player player, String key) {
         if (containsPlayer(player)) {
             return environment.get(player).getOrDefault(key, null);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -90,21 +89,21 @@ public class Environment {
     public static boolean load(Player player, File file) {
         try {
             Messages.setVariable("file", file.getName());
-            ConfigurationSection root = ((ConfigurationSection) YamlConfiguration.loadConfiguration(file).get("environment"));
+            ConfigurationSection root = ((ConfigurationSection) YamlConfiguration.loadConfiguration(file)
+                    .get("environment"));
             if (Objects.isNull(root)) {
                 return false;
             }
             Map<String, Object> currentMap = root.getValues(false);
-            for (Object object: currentMap.values()) {
+            for (Object object : currentMap.values()) {
                 if (!(object instanceof String)) {
                     Messages.severeLanguage("variableShouldBeString");
                     return false;
                 }
             }
-            environment.put(player,((Map<String, String>) (Object) currentMap));
+            environment.put(player, ((Map<String, String>) (Object) currentMap));
             return true;
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             Messages.setException(exception);
             Messages.severeLanguage("exceptionInLoadingEnvironment");
             exception.printStackTrace();
@@ -130,8 +129,7 @@ public class Environment {
         if (!saveTo.exists()) {
             try {
                 saveTo.createNewFile();
-            }
-            catch (IOException ioException) {
+            } catch (IOException ioException) {
                 Messages.setException(ioException);
                 Messages.severeLanguage("exceptionInSavingEnvironment");
                 ioException.printStackTrace();
@@ -143,8 +141,7 @@ public class Environment {
             yaml.set("environment", environment);
             yaml.save(saveTo);
             return true;
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             Messages.setException(exception);
             Messages.severeLanguage("exceptionInSavingEnvironment");
             exception.printStackTrace();

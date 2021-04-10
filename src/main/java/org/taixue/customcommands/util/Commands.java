@@ -1,23 +1,22 @@
 package org.taixue.customcommands.util;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 import org.taixue.customcommands.customcommand.Command;
 import org.taixue.customcommands.customcommand.Group;
 import org.taixue.customcommands.language.Messages;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.MemorySection;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class Commands {
-    private Commands() {}
+    private Commands() {
+    }
 
     @NotNull
-    public static Command loadFromMemorySection(@NotNull Group addTo,
-                                                @NotNull MemorySection memorySection) {
+    public static Command loadFromMemorySection(@NotNull Group addTo, @NotNull MemorySection memorySection) {
         Command result = new Command();
         result.setName(memorySection.getName());
 
@@ -31,8 +30,7 @@ public class Commands {
 
         if (memorySection.contains("usage")) {
             result.setUsageString(((String) memorySection.get("usage")));
-        }
-        else {
+        } else {
             result.setUsageString("/ccsr " + addTo.getName() + " " + result.getFormat());
         }
         Messages.setVariable("usage", result.getUsageString());
@@ -45,53 +43,49 @@ public class Commands {
                 if (identifyString.startsWith("player")) {
                     result.setIdentifyPlayer(identifyString.substring(identifyString.indexOf(":") + 1).trim());
                 }
-            }
-            else {
+            } else {
                 result.setIdentify(Command.Identify.valueOf(identifyString.toUpperCase()));
             }
-        }
-        else {
+        } else {
             Messages.setVariable("identify", "auto");
             result.setIdentify(Command.Identify.AUTO);
         }
 
-
         if (memorySection.contains("result")) {
             result.setResultString(((String) memorySection.get("result")));
-        }
-        else {
+        } else {
             result.setResultString(null);
         }
         Messages.setVariable("result", result.getResultString());
 
         if (memorySection.contains("permissions")) {
             result.setPermissions(((List<String>) memorySection.get("permissions")).toArray(new String[0]));
-        }
-        else {
-            result.setPermissions(new String[]{"ccs.run." + addTo.getName() + "." + result.getName()});
+        } else {
+            result.setPermissions(new String[] { "ccs.run." + addTo.getName() + "." + result.getName() });
         }
 
         result.setMatches(new HashMap<>());
-//        if (memorySection.contains("matches")) {
-//            result.setMatches((Map<String, String>) (Object) ((MemorySection) memorySection.get("matches")).getValues(false));
-//        }
-//        else {
-//            result.setMatches(new HashMap<>());
-//        }
+        // if (memorySection.contains("matches")) {
+        // result.setMatches((Map<String, String>) (Object) ((MemorySection)
+        // memorySection.get("matches")).getValues(false));
+        // }
+        // else {
+        // result.setMatches(new HashMap<>());
+        // }
 
         return result;
     }
 
     /**
      * 检查一个 CommandSender 是否具有使用某一个指令的权限
+     * 
      * @param commandSender
      * @param command
      * @return
      */
-    public static boolean hasPermission(@NotNull CommandSender commandSender,
-                                        @NotNull Command command) {
+    public static boolean hasPermission(@NotNull CommandSender commandSender, @NotNull Command command) {
         boolean hasPermission = true;
-        for (String permission: command.getPermissions()) {
+        for (String permission : command.getPermissions()) {
             if (!commandSender.hasPermission(permission)) {
                 return false;
             }
@@ -101,9 +95,9 @@ public class Commands {
 
     @NotNull
     public static ArrayList<Command> screenUsableCommand(@NotNull CommandSender commandSender,
-                                              @NotNull ArrayList<Command> commands) {
+            @NotNull ArrayList<Command> commands) {
         ArrayList<Command> result = new ArrayList<>();
-        for (Command command: commands) {
+        for (Command command : commands) {
             if (hasPermission(commandSender, command)) {
                 result.add(command);
             }
@@ -118,16 +112,14 @@ public class Commands {
     }
 
     public static boolean isLegalCommandMemorySection(@NotNull MemorySection memorySection) {
-        if (memorySection.contains("format") &&
-                memorySection.contains("actions") &&
-                memorySection.get("format") instanceof String &&
-                memorySection.get("actions") instanceof List) {
+        if (memorySection.contains("format") && memorySection.contains("actions")
+                && memorySection.get("format") instanceof String && memorySection.get("actions") instanceof List) {
 
             if (memorySection.contains("permissions") && !(memorySection.get("permissions") instanceof List)) {
                 return false;
             }
-            if (memorySection.contains("identify") && !(memorySection.get("identify") instanceof String &&
-                    ((String) memorySection.get("identify")).matches("console|auto|bypass|player:\\w+"))) {
+            if (memorySection.contains("identify") && !(memorySection.get("identify") instanceof String
+                    && ((String) memorySection.get("identify")).matches("console|auto|bypass|player:\\w+"))) {
                 return false;
             }
             if (memorySection.contains("usage") && !(memorySection.get("usage") instanceof String)) {
@@ -140,8 +132,7 @@ public class Commands {
                 return false;
             }
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -156,7 +147,7 @@ public class Commands {
         command.setUsageString("/ccsr " + group.getName() + " " + command.getFormat());
         command.setIdentify(Command.Identify.AUTO);
         command.setResultString(null);
-        command.setPermissions(new String[]{"ccs.run." + group.getName() + "." + command.getName()});
+        command.setPermissions(new String[] { "ccs.run." + group.getName() + "." + command.getName() });
         return command;
     }
 }

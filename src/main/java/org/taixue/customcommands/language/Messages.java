@@ -1,12 +1,12 @@
 package org.taixue.customcommands.language;
 
 import com.alibaba.fastjson.JSON;
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 import org.taixue.customcommands.Plugin;
 import org.taixue.customcommands.util.Paths;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -14,7 +14,8 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 public class Messages {
-    private Messages() {}
+    private Messages() {
+    }
 
     private static Language language;
     private static Logger logger;
@@ -26,11 +27,10 @@ public class Messages {
             return true;
         }
         try {
-            language = JSON.parseObject(Plugin.plugin.getResource(Paths.LANG_DIR + Paths.SPLIT + languageCode + ".json"),
-                    Language.class);
+            language = JSON.parseObject(
+                    Plugin.plugin.getResource(Paths.LANG_DIR + Paths.SPLIT + languageCode + ".json"), Language.class);
             return true;
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             severeString("Fail to load language file: " + language + ".json " + ", because: " + exception);
             exception.printStackTrace();
             return false;
@@ -79,6 +79,7 @@ public class Messages {
     public static String replaceVariableString(@NotNull String string) {
         return replaceVariableString(null, string);
     }
+
     @NotNull
     public static String replaceVariableString(Player player, @NotNull String string) {
         if (!string.contains("{")) {
@@ -91,21 +92,17 @@ public class Messages {
             lparen = stringBuilder.indexOf("{", rparen);
             rparen = stringBuilder.indexOf("}", lparen);
 
-            if (lparen != -1 &&
-                    rparen != -1 &&
-                    rparen > lparen + 1) {
+            if (lparen != -1 && rparen != -1 && rparen > lparen + 1) {
                 String variableName = stringBuilder.substring(lparen + 1, rparen);
                 String variableValue = Environment.getVariable(player, variableName);
                 if (Objects.nonNull(variableValue)) {
                     if (variableName.contains("exception")) {
                         stringBuilder.replace(lparen, rparen + 1, red(variableValue));
-                    }
-                    else {
+                    } else {
                         stringBuilder.replace(lparen, rparen + 1, variableValue);
                     }
                 }
-            }
-            else {
+            } else {
                 break;
             }
         }
@@ -117,8 +114,7 @@ public class Messages {
         try {
             Field message = Language.class.getField(messageName);
             return replaceVariableString(((String) message.get(language)));
-        }
-        catch (Exception noSuchFieldException) {
+        } catch (Exception noSuchFieldException) {
             return messageName;
         }
     }
@@ -128,8 +124,7 @@ public class Messages {
             sender.sendMessage("Unexpected error: cannot load language file, please check if syntax errors exist.");
             sender.sendMessage("[" + Plugin.NAME + "]" + message);
             severeString("Unexpected error: cannot load language file, please check if syntax errors exist.");
-        }
-        else {
+        } else {
             sender.sendMessage(language.messageHead + message);
         }
     }
@@ -177,7 +172,8 @@ public class Messages {
         Messages.infoString(white("You can support us in following websites:"));
         Messages.infoString(yellow("Github: ") + Plugin.GITHUB + gray("(Remember to give me a star :>)"));
         Messages.infoString(yellow("MCBBS: ") + Plugin.MCBBS);
-        Messages.infoString("Join the QQ group: " + red(Plugin.QQ_GROUP) + " to get the newest update and some tech-suppositions.");
+        Messages.infoString(
+                "Join the QQ group: " + red(Plugin.QQ_GROUP) + " to get the newest update and some tech-suppositions.");
     }
 
     public static String white(String string) {

@@ -1,11 +1,12 @@
 package org.taixue.customcommands.script;
 
-import com.sun.istack.internal.NotNull;
 import org.taixue.customcommands.language.Messages;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public class Strings {
-    private Strings() {}
+    private Strings() {
+    }
 
     public static final String LEGAL_COMMAND_NAME_REGEX = "[a-zA-z0-9_][a-zA-z0-9_\\-]*";
     public static final String LEGAL_VARIABLE_NAME_REGEX = "[a-zA-z_][a-zA-z0-9_]*";
@@ -25,7 +26,6 @@ public class Strings {
         return variableName.matches(LEGAL_GROUP_NAME_REGEX);
     }
 
-
     public static String getRemainString(String[] strings, int beginIndex) {
         if (strings.length <= beginIndex) {
             return "";
@@ -44,13 +44,11 @@ public class Strings {
             int result = Integer.parseInt(indexString);
             if (result <= top && result >= 1) {
                 return result;
-            }
-            else {
+            } else {
                 Messages.sendMessage(commandSender, "illegalIndex");
                 return -1;
             }
-        }
-        else {
+        } else {
             Messages.sendMessage(commandSender, "illegalIndex");
             return -1;
         }

@@ -1,18 +1,19 @@
 package org.taixue.customcommands.util;
 
-import com.sun.istack.internal.NotNull;
 import org.taixue.customcommands.customcommand.Command;
 import org.taixue.customcommands.customcommand.Group;
 import org.taixue.customcommands.language.Messages;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.MemorySection;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class Groups {
-    private Groups() {}
+    private Groups() {
+    }
 
     @NotNull
     public static Group loadFromMemorySection(@NotNull MemorySection memorySection) {
@@ -23,23 +24,21 @@ public class Groups {
 
         Map<String, Object> commandMap = memorySection.getValues(false);
         Set<String> loadedCommands = new HashSet<>();
-        for (String commandName: commandMap.keySet()) {
+        for (String commandName : commandMap.keySet()) {
             Messages.setVariable("command", commandName);
             try {
                 MemorySection subMemorySection = ((MemorySection) commandMap.get(commandName));
 
                 if (loadedCommands.contains(commandName)) {
                     Messages.severeLanguage("redefinedCommands");
-                }
-                else {
+                } else {
                     if (Commands.isLegalCommandMemorySection(subMemorySection)) {
                         loadedCommands.add(commandName);
                         Command command = Commands.loadFromMemorySection(result, subMemorySection);
                         if (command.isLegalParameters()) {
                             if (command.isLegalMatches()) {
                                 result.addCommand(command);
-                            }
-                            else {
+                            } else {
                                 Messages.severeLanguage("matchesError");
                             }
                         } else {
@@ -49,8 +48,7 @@ public class Groups {
                         Messages.severeLanguage("wrongFormatForCommand");
                     }
                 }
-            }
-            catch (Exception exception) {
+            } catch (Exception exception) {
                 Messages.setException(exception);
                 Messages.severeLanguage("exceptionInLoadingCommand");
                 exception.printStackTrace();
